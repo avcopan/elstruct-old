@@ -1,0 +1,6 @@
+[MASTER]
+disable=
+    too-many-locals,
+    too-many-arguments,
+    too-few-public-methods,
+    redefined-builtin
