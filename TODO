@@ -1,0 +1,22 @@
+
+Reader:
+- get the symmetry for the vibrational frequencies?
+- get library of pattern parsers to make things more uniform. Store in rere or somewhere else appropriate
+- get consistent naming scheme for main reader functions called by external scripts in energy, freq, struct, etc libraries
+
+Runner:
+- CFour serial cannot be called
+- Write error checks to check if input file exists 
+- nwchem broken for blues
+- psi4 runner not tested
+
+Writer:
+- Create a library to write files where information obtained Reader module is stored in some standard format
+
+Pylint:
+Ignore messages:
+- Similar lines in 2 files
+- Anomalous backslash in string:
+- Too many arguments
+- Too many local variables
+

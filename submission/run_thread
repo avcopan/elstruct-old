@@ -1,0 +1,4 @@
+hostnodes        = b450, b451, b452
+program          = molpro2015
+ncores_per_node  = 4
+

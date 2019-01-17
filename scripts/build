@@ -1,0 +1,53 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import argparse
+import subprocess
+from buildlib import grab_structures
+from buildlib import write_input_file
+
+# Create an ArgumentParser object to store the user-desired parameters for job submission
+cmd_line_parser = argparse.ArgumentParser()
+
+# positional arguments  
+cmd_line_parser.add_argument("structure_file",
+  help="Enter the name of the file containing all the structures to have calculations run on")
+cmd_line_parser.add_argument("template_file",
+  help="Enter the name of the template file that will be used to build the jobs")
+
+# additional parameters
+cmd_line_parser.add_argument("-c","--count",default=-1,type=int,
+  help="amount of directories to build")
+cmd_line_parser.add_argument("-a","--augbasis",default=False,type=bool,
+  help="use augmented basis sets")
+cmd_line_parser.add_argument("-d","--densityfit",default=False,type=bool,
+  help="density fit the Hartree-Fock (if not already required")
+
+# Place all of the parameters needed to create the submission script into a dictionary
+BUILD_OPTIONS = vars(cmd_line_parser.parse_args())
+
+# Get info to build job directories
+names, mults, coords = grab_structures(BUILD_OPTIONS['structure_file'])
+
+# Get rid of parentheses in chemical names
+names_fixed = [ name.replace('(','p').replace(')','q') for name in names ]
+
+# Create the job directories
+for i in range(len(names_fixed)):
+
+  if i+1 == BUILD_OPTIONS['count']:
+    # Kill script
+    sys.exit()
+  else:
+    # Create and go into the directory
+    os.mkdir(str(i+1)+'_'+names_fixed[i])
+    os.chdir(str(i+1)+'_'+names_fixed[i])
+
+    # Call the writer function
+    write_input_file(names_fixed[i], mults[i], coords[i], 
+                      BUILD_OPTIONS['template_file'], BUILD_OPTIONS['augbasis'], BUILD_OPTIONS['densityfit'])
+
+    # Return to main directory with each job
+    os.chdir('../')
+  

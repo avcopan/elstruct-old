@@ -1,0 +1,37 @@
+#!/usr/bin/env python
+
+import sys
+import os
+
+def sortfxn(string):
+  ''' Function used as a key in list.sort() call to sort by dir indices 
+  '''
+  return int(string.split('_')[0])
+
+mainpath = os.getcwd()+'/'
+
+dirpaths = []
+for entry in os.listdir('.'):
+  path = mainpath+entry
+  if os.path.isdir(path):
+    dirpaths.append(entry)
+if os.path.exists('./submission_scripts'):
+  dirpaths.remove('submission_scripts')
+dirpaths.sort(key=sortfxn)
+
+jobpaths = [ mainpath+dirpath for dirpath in dirpaths ]
+
+for jobpath in jobpaths:
+  os.chdir(jobpath)
+  filename = jobpath.split('/')[-1]
+  if os.path.exists('./output.dat') == True:
+    with open('output.dat','r') as outfile:
+      outlines = outfile.readlines()  
+    if 'Variable memory released' not in outlines[-1]:
+      os.system('rm ./submission_scripts/run_'+filename+'_blues.sh')
+    else:
+      continue
+  else:
+    os.chdir('../')      
+    os.system('rm ./submission_scripts/run_'+filename+'_blues.sh')
+
