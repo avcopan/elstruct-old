@@ -1,0 +1,141 @@
+#!/usr/bin/env python
+
+import os
+#import series_molpro 
+#import series_orca 
+
+
+def sortfxn(string):
+  return int(string.split('_')[0])
+
+def read_energies():
+
+  # Initialize energy string
+  energy_str = ''
+  time_str = ''
+  edz = ''
+  etz = ''
+  eqz = ''
+  e5z = ''
+
+  # Check if output.dat exists and read data if it exists
+  if os.path.exists('./output.dat'):
+ 
+    with open('output.dat','r') as jobfile:
+      jobdata = jobfile.readlines()      
+
+    # Grab the CC energies while checking if job finished
+    # Add the job wall time for completed jobs  
+    for i in range(len(jobdata)):
+      if 'SETTING EDZ' in jobdata[i]:   
+        edz = jobdata[i].strip().split()[3] + ' ' 
+      if 'EDZ              =' in jobdata[i]:
+        edz = jobdata[i].strip().split()[2] + ' ' 
+      if 'SETTING ETZ' in jobdata[i]:    
+        etz = jobdata[i].strip().split()[3] + ' ' 
+      if 'ETZ              =' in jobdata[i]:
+        etz = jobdata[i].strip().split()[2] + ' ' 
+      if 'SETTING EQZ' in jobdata[i]: 
+        eqz = jobdata[i].strip().split()[3] + ' ' 
+      if 'EQZ              =' in jobdata[i]:
+        eqz = jobdata[i].strip().split()[2] + ' ' 
+      if 'SETTING E5Z' in jobdata[i]: 
+        e5z = jobdata[i].strip().split()[3] + ' ' 
+      if 'E5Z              =' in jobdata[i]:
+        e5z = jobdata[i].strip().split()[2] + ' ' 
+    for i in reversed(range(len(jobdata))):    
+      if 'REAL TIME' in jobdata[i]:
+        time_str = time_str + '   ' + jobdata[i].strip().split()[3]
+        break
+ 
+  if os.path.exists('./5z/output.dat'):
+    with open('./5z/output.dat','r') as fivezfile:
+      fivezdata = fivezfile.readlines()      
+      for i in range(len(fivezdata)):
+        if 'SETTING E5Z' in fivezdata[i]: 
+          e5z = fivezdata[i].strip().split()[3] + ' ' 
+
+  # Add a line for seperation
+  energy_str = '  ' + edz + etz + eqz + e5z + '\n'
+  time_str = time_str + '\n' 
+
+  return energy_str,time_str
+
+# Get the job directories in a list
+dirlist = os.listdir('.')
+if os.path.exists('./submission_scripts'):
+  dirlist.remove('submission_scripts')
+jobdirs = []
+for x in dirlist:
+  path = os.getcwd()+'/'+x     
+  if os.path.isdir(path):
+    jobdirs.append(x)
+
+# Sort the list
+jobdirs.sort(key=sortfxn)
+
+# Get empty list where everything stored
+ref_energies = []
+energies = []
+times = []
+
+# Loop through directories and grab everything
+count = 13 
+header_list = [96, 183, 234, 254, 265, 320, 340] 
+ref_list = ['H2', 'CH4', 'H2O', 'NH3']
+for dir in jobdirs:
+  
+  # Increase counter
+  count += 1
+  
+  if count in header_list:
+    count += 1
+    energies.append('\n')
+    times.append('\n')
+    
+  # Print the directory 
+  print(dir)
+  
+  # Blank the job
+  energy_str = ''
+  time_str = ''
+  
+  # Go into directory
+  os.chdir(dir)
+  
+  # Check if a redo directory exists for rerunning a job that failed
+  if os.path.exists('./retry'):
+    os.chdir('retry')
+    energy, time = read_energies()
+    energy_str = str(count)+'_'+dir + energy
+    time_str = str(count)+'_'+dir + time
+    os.chdir('../')
+    if name in ref_list:
+      ref_energies.append(name + energy)
+  else:
+    energy, time = read_energies()
+    name = str(dir).split('_')[1] 
+    energy_str = str(count)+'_'+dir + energy
+    time_str = str(count)+'_'+dir + time
+    if name in ref_list:
+      ref_energies.append(name + energy)
+  
+  # Append to energies list
+  energies.append(energy_str)
+  times.append(time_str)
+  
+  # Go back up a directory
+  os.chdir('../')
+  
+# Write the energies and times to files
+with open('energies.dat','w') as energyfile:
+  for line in ref_energies:
+    energyfile.writelines(line)
+  energyfile.writelines('\n')
+  for line in energies:
+    energyfile.writelines(line)
+with open('times.dat','w') as timefile:
+  for line in times:
+    timefile.writelines(line)
+
+

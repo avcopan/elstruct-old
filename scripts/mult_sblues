@@ -1,0 +1,152 @@
+#!/usr/bin/env python
+
+import sys
+import os
+import argparse
+import subprocess
+import elstruct
+from thread import tag_team_starmap
+
+def sortfxn(string):
+  ''' Function used as a key in list.sort() call to sort by dir indices 
+  '''
+  return int(string.split('_')[0])
+
+
+def submit_fxn(jobpath, unsub_file_name, old_file_name, worker_id):
+  ''' Changes to job directory and calls elstruct.runner, feeding in node ID. 
+  '''
+
+  # Write submission file
+  with open(unsub_file_name,'w') as unsub_sub_file:
+    with open(old_file_name,'r') as old_sub_file:
+      for line in old_sub_file:
+        if 'CWD=' in line:
+          unsub_sub_file.write('CWD='+jobpath+'\n')
+        elif 'HOST=' in line:
+          unsub_sub_file.write('HOST='+worker_id+'\n')
+        else:
+          unsub_sub_file.write(line)
+
+  # Submit job using the file
+  #subprocess.call( ['chmod', '+x', unsub_file_name ] )
+  #subprocess.check_call( [ 'bash', unsub_file_name ] )
+
+  return None
+
+
+##### BUILD AN INITIAL SUBMISSION SCRIPT THAT WILL SERVE AS A TEMPLATE WHERE THE HOST AND WORKING DIR CHANGES #### 
+
+# Create an ArgumentParser object to store the user-desired parameters for job submission
+cmd_line_parser = argparse.ArgumentParser()
+
+# Use positional arguments to specify the program to be ran as well as the compute nodes 
+cmd_line_parser.add_argument("program",
+  help="Program to run (Supported: cfour2, gaussian09, molpro2015, molpro2015-mppx, orca4, psi4)")
+cmd_line_parser.add_argument("hostnodes",
+  help="Options: (1) Enter as list: node1,node2,node3...; (2) List nodes in a 'machines' file")
+
+# Set additional parameters for user may want to control job submission 
+cmd_line_parser.add_argument("-J","--njobs",default=1,type=int,
+  help="Run 'njobs' molpro2015 calcs on SINGLE node. Put jobs in calcn directory where 1<=n<=njobs. (default: %(default)d)")
+cmd_line_parser.add_argument("-n","--ncores_per_node",default=1,type=int,
+  help="Number of cores for EACH node (default: %(default)d)")
+cmd_line_parser.add_argument("-i","--input",default="input.dat",
+  help="Name of input file (default: %(default)s)")
+cmd_line_parser.add_argument("-o","--output",default="output.dat",
+  help="Name of output file (default: %(default)s)")
+cmd_line_parser.add_argument("-d","--scratch",default="/scratch/$USER",
+  help="Set the scratch directory (default: %(default)s)")
+cmd_line_parser.add_argument("-c","--count",default=-1,type=int,
+  help="count of jobs to submit")
+
+# Place all of the parameters needed to create the submission script into a dictionary
+SUBMIT_OPTIONS = vars(cmd_line_parser.parse_args())
+
+# Check if user wishes to allocate nodes using a machine file; reset hostnodes variable if so
+if SUBMIT_OPTIONS["hostnodes"] == 'machines':
+  if os.path.exists('./machines'):
+    with open('machines','r') as machinefile:
+     nodes = '' 
+     for line in machinefile:
+        if line.strip() != '':
+          nodes = nodes + line.strip() + ','
+     SUBMIT_OPTIONS["hostnodes"] = nodes[:-1]
+  else:
+    raise ValueError('No machines file found. Please place desired nodes in a vertical list in a file named machines')
+
+# Build submision script directory
+os.system('mkdir -p submission_scripts')
+os.chdir('submission_scripts')
+
+# Call blues runner script to get an initial blues submission script
+elstruct.runner.blues.submit(
+    program=SUBMIT_OPTIONS["program"],
+    hostnodes='bNODE',
+    njobs=SUBMIT_OPTIONS["njobs"],
+    ncores_per_node=SUBMIT_OPTIONS["ncores_per_node"],
+    input_name=SUBMIT_OPTIONS["input"],
+    output_name=SUBMIT_OPTIONS["output"],
+    scratch=SUBMIT_OPTIONS["scratch"],
+    submit=False,
+    background=True
+)
+
+# Return to directory with job directories
+os.chdir('../')
+
+###############################################################
+
+
+##### BUILD AN INITIAL SUBMISSION SCRIPT THAT WILL SERVE AS A TEMPLATE WHERE THE HOST AND WORKING DIR CHANGES #### 
+
+# Get the lsit of directories containing each job
+mainpath = os.getcwd()+'/'
+
+# Get the initial list of the job directories
+dirpaths = []
+for entry in os.listdir('.'):
+  path = mainpath+entry
+  if os.path.isdir(path):
+    dirpaths.append(entry)
+if os.path.exists('./submission_scripts'):
+  dirpaths.remove('submission_scripts')
+#dirpaths.sort(key=float)
+dirpaths.sort(key=sortfxn)
+
+# Get new file names and full job paths and checking if job not submitted
+
+unsub_file_names = []
+jobpaths = []
+counter = 0
+for path in dirpaths:
+  if counter == SUBMIT_OPTIONS["count"]:
+    break
+  else:
+      script_path = mainpath + 'submission_scripts/' + 'run_' + path + '_blues.sh'
+      job_path = mainpath + path  
+      if os.path.exists(script_path) == False: 
+        if os.path.exists(job_path+'/output.dat') == False:      
+          jobpaths.append( job_path )
+          unsub_file_names.append( script_path )    
+          counter = counter + 1
+
+# Obtain file names to pass into submission function
+old_file_names = [ mainpath+'submission_scripts/'+'run_'+SUBMIT_OPTIONS['program']+'_blues.sh' for i in range(len(unsub_file_names)) ]
+
+# Zip up all the things needed to pass into submission function
+job_args = tuple( zip(jobpaths, unsub_file_names, old_file_names) )
+
+print(job_args)
+
+# Get the list of nodes to be submitted to; stored as worker_ids
+worker_ids = SUBMIT_OPTIONS['hostnodes'].split(',')
+
+###############################################################
+
+
+##### FEED OPTIONS INTO TAG_TEAM THREADING FUNCTION WHICH CALLS THE SUBMIT FUNCTION #### 
+
+#tag_team_starmap(submit_fxn, job_args, worker_ids)
+
+#### END PROGRAM #####
