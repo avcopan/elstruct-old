@@ -1,0 +1,20 @@
+# cmd: conda build . --python 2 -c psi4
+package:
+    name: elstruct
+    version: "0.1.0"
+
+source:
+    path: .
+
+requirements:
+    build:
+        - python
+    run:
+        - pip
+        - python
+        - pytest
+        - pytest-cov
+        - mako
+        - psi4
+        - flake8
+        - pylint

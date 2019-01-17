@@ -25,7 +25,8 @@ def test__energy():
                 output_string = output_file.read()
 
             reference_energy = iohelp.read_energy(reference_path)
-            energy = reader.energy(prog=prog, method=method, output_string=output_string)
+            energy = reader.energy(prog=prog, method=method,
+                                   output_string=output_string)
             assert numpy.allclose(energy, reference_energy)
 
 
