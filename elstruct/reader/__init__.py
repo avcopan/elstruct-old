@@ -9,6 +9,7 @@ PACKAGE = 'elstruct.reader'
 PROGRAM_MODULE_NAMES = {
     PROGRAM.MOLPRO: 'molpro',
     PROGRAM.MOLPRO_MPPX: 'molpro',
+    PROGRAM.PSI4: 'psi4',
 }
 
 
@@ -18,6 +19,7 @@ def _import_module(prog):
     assert prog in PROGRAM_MODULE_NAMES.keys()
     module_name = PROGRAM_MODULE_NAMES[prog]
     module = importlib.import_module('.'+module_name, PACKAGE)
+
     return module
 
 
@@ -29,6 +31,7 @@ def _programs_with_attribute(attr):
         module = _import_module(prog)
         if hasattr(module, attr):
             progs.append(prog)
+
     return progs
 
 
@@ -36,6 +39,7 @@ def energy_programs():
     """ get the list of programs implementing energy readers
     """
     energy_progs = _programs_with_attribute('ENERGY_READERS')
+
     return energy_progs
 
 
@@ -45,6 +49,7 @@ def energy_program_methods(prog):
     assert prog in energy_programs()
     module = _import_module(prog)
     energy_prog_methods = tuple(module.ENERGY_READERS.keys())
+
     return energy_prog_methods
 
 
@@ -54,14 +59,16 @@ def energy(prog, method, output_string):
     assert prog in energy_programs()
     assert method in energy_program_methods(prog)
     module = _import_module(prog)
-    energy = module.ENERGY_READERS[method](output_string)
-    return energy
+    energy_val = module.ENERGY_READERS[method](output_string)
+
+    return energy_val
 
 
 def harmonic_frequencies_programs():
     """ get the list of programs implementing hamonic frequency readers
     """
     freq_progs = _programs_with_attribute('harmonic_frequencies_reader')
+
     return freq_progs
 
 
@@ -72,29 +79,35 @@ def harmonic_frequencies(prog, output_string):
     assert prog in harmonic_frequencies_programs()
     module = _import_module(prog)
     freqs = module.harmonic_frequencies_reader(output_string)
+
     return freqs
 
 
 def harmonic_zero_point_vibrational_energy_programs():
-    """ get the list of programs implementing hamonic zero point vibrational energies
+    """ get the list of programs implementing
+        hamonic zero point vibrational energies
     """
+
     return harmonic_frequencies_programs()
 
 
 def harmonic_zero_point_vibrational_energy(prog, output_string):
-    """ Reads the harmonic zero-point vibrational energy (ZPVE) from the output file.
+    """ Reads the harmonic zero-point vibrational energy (ZPVE)
+        from the output file.
         Returns the ZPVE as a float; in Hartrees.'
     """
     freqs = harmonic_frequencies(prog=prog, output_string=output_string)
     zpve = sum(freqs) / 2. * CM_TO_HART
-    return zpve
 
+    return zpve
 
 
 def optimized_cartesian_geometry_programs():
     """ get the list of programs implementing optimized cartesian geometry readers
     """
-    geom_progs = _programs_with_attribute('optimized_cartesian_geometry_reader')
+    geom_progs = _programs_with_attribute(
+        'optimized_cartesian_geometry_reader')
+
     return geom_progs
 
 
@@ -105,50 +118,69 @@ def optimized_cartesian_geometry(prog, output_string):
     assert prog in optimized_cartesian_geometry_programs()
     module = _import_module(prog)
     cart_geom = module.optimized_cartesian_geometry_reader(output_string)
+
     return cart_geom
 
 
-#def frequency(freq, output_string):
-#    """ Retrieves the desired frequency information.
-#    """
-#
-#    assert freq in FREQUENCY_READERS.keys()
-#
-#    frequency = FREQUENCY_READERS[freq](output_string)
-#
-#    return frequency
+def init_internal_geometry_programs():
+    """ get the list of programs implementing init internal geometry readers
+    """
+    geom_progs = _programs_with_attribute(
+        'init_internal_geometry_reader')
 
-#def structure(struct, output_string):
-#    """ Retrieves the desired structural infromation.
-#    """
+    return geom_progs
+
+
+def init_internal_geometry(prog, output_string):
+    """ Retrieves the optimized geometry in Cartesian xyz coordinates.
+        Units of Angstrom.
+    """
+    assert prog in init_internal_geometry_programs()
+    module = _import_module(prog)
+    int_geom = module.init_internal_geometry_reader(output_string)
+
+    return int_geom
+# def frequency(freq, output_string):
+#     """ Retrieves the desired frequency information.
+#     """
 #
-#    assert struct in STRUCTURE_READERS.keys()
+#     assert freq in FREQUENCY_READERS.keys()
 #
-#    struct = STRUCTURE_READERS[struct](output_string)
+#     frequency = FREQUENCY_READERS[freq](output_string)
 #
-#    return struct
-#def surface(surf, output_string):
-#    """ Retrieves the desired information regarding the potential energy surface.
-#    """
+#     return frequency
+# def structure(struct, output_string):
+#     """ Retrieves the desired structural infromation.
+#     """
 #
-#    surf_info = SURFACE_READERS[surf](output_string)
+#     assert struct in STRUCTURE_READERS.keys()
 #
-#    return surface_info
-#def mol_property(prop, output_string):
-#    """ Retrieves the desired molecular property.
-#    """
+#     struct = STRUCTURE_READERS[struct](output_string)
 #
-#    mol_property = PROPERTY_READERS[prop](output_string)
+#     return struct
+# def surface(surf, output_string):
+#     """ Retrieves the desired information regarding
+#         the potential energy surface.
+#     """
 #
-#    return mol_property
-#def status(output_string):
-#    """ Returns the status of a job.
-#    """
+#     surf_info = SURFACE_READERS[surf](output_string)
 #
-#    # Check if the job completed or if any error messages were printed
-#    job_complete = complete_msg_reader(output_string)
-#    job_error_str = error_msg_reader(output_string)
+#     return surface_info
+# def mol_property(prop, output_string):
+#     """ Retrieves the desired molecular property.
+#     """
 #
-#    job_status = [complete_status, job_error_str]
+#     mol_property = PROPERTY_READERS[prop](output_string)
 #
-#    return job_status
+#     return mol_property
+# def status(output_string):
+#     """ Returns the status of a job.
+#     """
+#
+#     # Check if the job completed or if any error messages were printed
+#     job_complete = complete_msg_reader(output_string)
+#     job_error_str = error_msg_reader(output_string)
+#
+#     job_status = [complete_status, job_error_str]
+#
+#     return job_status

@@ -1,71 +1,76 @@
 #!/usr/bin/env python
+"""
+Builds a lot of jobs
+"""
 
 import os
 import numpy as np
 from mako.template import Template
-import sys
 
 # Set ranges to for job submission
-coords = 2
+COORDS = 2
 
-if coords == 1:
-  dist = np.arange(1.0,2.55,0.05) 
-  angle = np.arange(90.0,178.0,1.0)
-  optdist = np.full( (len(dist),len(angle)), 1.215 )
-if coords == 2:
-  dist = np.arange(1.0,2.05,0.05) 
-  angle = np.arange(90.0,178.0,1.0)
-  optlist = []
-  with open('build.dat','r') as buildfile:
-    buildlines = buildfile.readlines()
-  for i in range(1,len(buildlines)):
-    tmp = buildlines[i].strip().split()
-    optlist.append(tmp[0])
-  optdist = np.reshape( optlist, (len(dist),len(angle)) )
-
-#print(optdist[0])
-#sys.exit()
+if COORDS == 1:
+    DIST = np.arange(1.0, 2.55, 0.05)
+    ANGLE = np.arange(90.0, 178.0, 1.0)
+    OPTDIST = np.full((len(DIST), len(ANGLE)), 1.215)
+if COORDS == 2:
+    DIST = np.arange(1.0, 2.05, 0.05)
+    ANGLE = np.arange(90.0, 178.0, 1.0)
+    OPTLIST = []
+    with open('build.dat', 'r') as buildfile:
+        BUILDLINES = buildfile.readlines()
+    for i in range(1, len(BUILDLINES)):
+        tmp = BUILDLINES[i].strip().split()
+        OPTLIST.append(tmp[0])
+    OPTDIST = np.reshape(OPTLIST, (len(DIST), len(ANGLE)))
 
 # Get the name of the template
-filename = 'nnnh_trip_opt.mako'
-#filename = 'nno_trip_opt.mako'
-dir_path = os.path.dirname(os.path.realpath(__file__))
-template_file = os.path.join(dir_path, 'templates', filename)
+FILENAME = 'nnnh_trip_OPT.mako'
+DIR_PATH = os.path.dirname(os.path.realpath(__file__))
+TEMPLATE_FILE = os.path.join(DIR_PATH, 'templates', FILENAME)
 
-for i in range(len(dist)):
+for i, d in enumerate(DIST):
 
-  os.mkdir('{0:3.2f}'.format(dist[i]))
-  os.chdir('{0:3.2f}'.format(dist[i]))
+    os.mkdir('{0:3.2f}'.format(DIST[i]))
+    os.chdir('{0:3.2f}'.format(DIST[i]))
 
-  for j in range(len(angle)):
+    for j, a in enumerate(ANGLE):
 
-    fill_vals = {
-      'optdist' : str(optdist[i,j]),
-      'dist'    : str(dist[i]),
-      'angle'   : str(angle[j])
-    }
-  
-    print(fill_vals['optdist']+'\t'+fill_vals['dist']+'\t'+fill_vals['angle'])
+        fill_vals = {
+            'OPTDIST': str(OPTDIST[i, j]),
+            'DIST': str(DIST[i]),
+            'ANGLE': str(ANGLE[j])}
 
-    if (j+1) % 4 == 1:
-      os.mkdir('JOB'+str(j+1))
-      os.chdir('JOB'+str(j+1))
-      os.mkdir('calc1')
-      os.chdir('calc1')
-      with open('input.dat',"w") as inputfile:
-        inputfile.write(Template(filename=template_file).render(**fill_vals))
-      os.chdir('../')
-    elif (j+1) % 4 == 0:
-      os.mkdir('calc4')
-      os.chdir('calc4')
-      with open('input.dat',"w") as inputfile:
-        inputfile.write(Template(filename=template_file).render(**fill_vals))
-      os.chdir('../../')
-    else:
-      os.mkdir('calc'+str((j+1)%4))
-      os.chdir('calc'+str((j+1)%4))
-      with open('input.dat',"w") as inputfile:
-        inputfile.write(Template(filename=template_file).render(**fill_vals))
-      os.chdir('../')
+        print(fill_vals['OPTDIST'] +
+              '\t' +
+              fill_vals['DIST'] +
+              '\t' +
+              fill_vals['ANGLE']
+              )
 
-  os.chdir('../')
+        if (j+1) % 4 == 1:
+            os.mkdir('JOB'+str(j+1))
+            os.chdir('JOB'+str(j+1))
+            os.mkdir('calc1')
+            os.chdir('calc1')
+            with open('input.dat', 'w') as inputfile:
+                fname = Template(filename=TEMPLATE_FILE).render(**fill_vals)
+                inputfile.write(fname)
+            os.chdir('../')
+        elif (j+1) % 4 == 0:
+            os.mkdir('calc4')
+            os.chdir('calc4')
+            with open('input.dat', 'w') as inputfile:
+                fname = Template(filename=TEMPLATE_FILE).render(**fill_vals)
+                inputfile.write(fname)
+            os.chdir('../../')
+        else:
+            os.mkdir('calc'+str((j+1) % 4))
+            os.chdir('calc'+str((j+1) % 4))
+            with open('input.dat', "w") as inputfile:
+                fname = Template(filename=TEMPLATE_FILE).render(**fill_vals)
+                inputfile.write(fname)
+            os.chdir('../')
+
+    os.chdir('../')

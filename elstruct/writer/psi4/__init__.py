@@ -38,4 +38,5 @@ def energy(theory, basis, labels, coords, charge=0, mult=1, niter=100,
     template_file_path = os.path.join(TEMPLATE_PATH, template_file_name)
 
     input_str = Template(filename=template_file_path).render(**fill_vals)
+
     return input_str

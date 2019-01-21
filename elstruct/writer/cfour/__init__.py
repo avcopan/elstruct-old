@@ -23,16 +23,18 @@ def energy(theory, basis, labels, coords, charge=0, mult=1, niter=100,
     assert theory in TEMPLATE_FILES.keys()
 
     # Obtain method and basis
-    if theory == 'rhf' or theory == 'uhf' or theory == 'rohf':
+    if theory in ('rhf', 'uhf', 'rohf'):
         method = 'HF'
         reference = theory
     else:
-        method = theory.split('-')[0] 
-        reference = theory.split('-')[0] 
-   
+        method = theory.split('-')[0]
+        reference = theory.split('-')[0]
+
     # Set values not automatically set by the user
     geom_str = xyz_string(labels, coords)
     fill_vals = {
+        'method': method,
+        'reference': reference,
         'charge': charge,
         'mult': mult,
         'geom': geom_str,
@@ -46,14 +48,5 @@ def energy(theory, basis, labels, coords, charge=0, mult=1, niter=100,
     template_file_path = os.path.join(TEMPLATE_PATH, template_file_name)
 
     input_str = Template(filename=template_file_path).render(**fill_vals)
+
     return input_str
-
-def optimization():
-
-  return input_str
-
-def vib_frequency():
-
-  return input_str
-
-

@@ -73,6 +73,8 @@ def write_cartesian_geometry(file_name, cart_geom):
 
 
 def read_cartesian_geometry(file_name):
+    """ read the cartesian geometry from a file
+    """
     with open(file_name) as file_obj:
         file_str = file_obj.read()
     cart_geom = _dot_xyz_to_geometry(file_str)

@@ -1,5 +1,6 @@
 """
-Library of functions to retrieve structural information from a Molpro 2015 output file
+Library of functions to retrieve structural information
+from a Molpro 2015 output file
 
 Structural currently supported:
 (1) final optimized geometry in Cartesian (xyz) coordinates;
@@ -11,37 +12,29 @@ Structural currently supported:
 """
 
 __authors__ = "Kevin Moore, Andreas Copan"
-__updated__ = "2019-01-11"
+__updated__ = "2019-01-18"
 
-from ..rere import find as ref
+from ..rere import parse as repar
 from ..rere import pattern as rep
 from ..rere import pattern_lib as relib
 from ... import params
 
 
-##### HELPER FUNCTION TO RETRIEVE TEXT BLOCK; TODO: Move to rere library #####
-
-def block(head_string, foot_string, string):
-    """ Returns a block of text
-    """
-    head_pattern = rep.escape(head_string)
-    foot_pattern = rep.escape(foot_string)
-    block_pattern = rep.capturing(
-        head_pattern + rep.one_or_more(relib.ANY_CHAR, greedy=False) +
-        foot_pattern)
-    return ref.last_capture(block_pattern, string)
-
-##### Patterns #####
-
+# Series of functions to read structural information
 
 def all_geom_xyz_reader(output_string):
     """ Retrieves the optimized geometry in Cartesian xyz coordinates.
         Units of Angstrom and degrees.
     """
 
-    # Pattern to idetify block of output string where optimized geometry is located
+    # Pattern to idetify text block where optimized geometry is located
     all_geom_xyz_begin_pattern = 'CARTESIAN COORDINATES (ANGSTROEM)'
     all_geom_xyz_end_pattern = 'CARTESIAN COORDINATES (A.U.)'
+
+    # Obtain text block of containing the optimized geometry in xyz coordinates
+    all_geom_xyz_block = repar.block(all_geom_xyz_begin_pattern,
+                                     all_geom_xyz_end_pattern,
+                                     output_string)
 
     # Pattern for the xyz coordinate of each atom
     all_geom_xyz_pattern = (
@@ -54,13 +47,11 @@ def all_geom_xyz_reader(output_string):
         rep.one_or_more(relib.FLOAT)
     )
 
-    # Obtain block of output string containing the optimized geometry in xyz coordinates
-    all_geom_block = repar.block(all_geom_xyz_begin_pattern, all_geom_xyz_end_pattern, output_string)
+    cart_geom = repar.pattern_parser_cartesian_geometry(
+        all_geom_xyz_pattern, all_geom_xyz_block)
 
-    # Obtain the xyz coordinates from the block
-    opt_geom_xyz = ref.capturing(opt_geom_block, opt_geom_xyz_pattern)
+    return cart_geom
 
-    return all_geom_xyz
 
 def all_geom_internal_reader(output_string):
     """ Retrieves the optimized geometry in internal coordinates.
@@ -71,7 +62,13 @@ def all_geom_internal_reader(output_string):
     all_geom_internal_begin_pattern = 'INTERNAL COORDINATES (ANGSTROEM)'
     all_geom_internal_end_pattern = 'INTERNAL COORDINATES (A.U.)'
 
-    all_geom_internal = (
+    # Obtain text block containing the optimized geometry in xyz coordinates
+    all_geom_internal_block = repar.block(
+        all_geom_internal_begin_pattern,
+        all_geom_internal_end_pattern,
+        output_string)
+
+    all_geom_internal_pattern = (
         rep.one_or_more(relib.ANY_CHAR) +
         rep.one_or_more(relib.WHITESPACE) +
         rep.one_or_more(relib.INTEGER) +
@@ -87,20 +84,16 @@ def all_geom_internal_reader(output_string):
         rep.one_or_more(relib.FLOAT)
     )
 
+    # Obtain the xyz coordinates from the block
+    all_geom_internal = repar.pattern_parser_1(
+        all_geom_internal_pattern, all_geom_internal_block)
+
     return all_geom_internal
 
-def equil_rot_constant_reader(output_string):
-    """ Retrieves the equilibrium rotational constant of the optimized geometry.
-        Units of cm-1.
-    """
 
-    return equil_rot_const
-
-
-##### Dictionary for strings to find the geometries in the files #####
+# Dictionary for strings to find the geometries in the files
 
 STRUCTURE_READERS = {
-    params.STRUCTURE.ALL_GEOM_XYZ: all_geom_xyz_reader,
-    params.STRUCTURE.ALL_GEOM_INT: all_geom_internal_reader,
-    params.STRUCTURE.EQUIL_ROT_CONST: equil_rot_const_reader,
+    params.STRUCTURE.OPT_GEOM_XYZ: all_geom_xyz_reader,
+    params.STRUCTURE.OPT_GEOM_INT: all_geom_internal_reader,
 }

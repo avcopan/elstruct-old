@@ -1,18 +1,16 @@
 """
-Library of functions to assess the job status of a Psi4 1.0 job using the output file.
+Library of functions to assess the job status of a Psi4 1.0 job
+using the output file.
 
 """
 
 __authors__ = "Kevin Moore, Andreas Copan"
-__updated__ = "2019-01-15"
+__updated__ = "2019-01-18"
 
 from ..rere import find as ref
-from ..rere import pattern as rep
-from ..rere import pattern_lib as relib
-from ... import params
 
 
-##### Series of functions to read job status information #####
+# Series of functions to read job status information
 
 def error_msg_reader(output_string):
     """ Searches the output file for possible error messages.
@@ -33,13 +31,17 @@ def error_msg_reader(output_string):
 
     return error_msg
 
+
 def complete_msg_reader(output_string):
     """ Checks if the job completes successfully.
         Returns job status and any error messages located
     """
 
     # Line printed if Molpro exits normally
-    complete_msg_pattern = '*** Psi4 exiting successfully. Buy a developer a beer!'
+    complete_msg_pattern = (
+        '*** Psi4 exiting successfully. ' +
+        'Buy a developer a beer!'
+    )
 
     # Check if the job went to completion
     complete_status = ref.has_match(complete_msg_pattern, output_string)

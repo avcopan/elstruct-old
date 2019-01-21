@@ -1,0 +1,276 @@
+
+    -----------------------------------------------------------------------
+          Psi4: An Open-Source Ab Initio Electronic Structure Package
+                               Psi4 1.2.1 release
+
+                         Git: Rev {HEAD} 406f4de 
+
+
+    R. M. Parrish, L. A. Burns, D. G. A. Smith, A. C. Simmonett,
+    A. E. DePrince III, E. G. Hohenstein, U. Bozkaya, A. Yu. Sokolov,
+    R. Di Remigio, R. M. Richard, J. F. Gonthier, A. M. James,
+    H. R. McAlexander, A. Kumar, M. Saitow, X. Wang, B. P. Pritchard,
+    P. Verma, H. F. Schaefer III, K. Patkowski, R. A. King, E. F. Valeev,
+    F. A. Evangelista, J. M. Turney, T. D. Crawford, and C. D. Sherrill,
+    J. Chem. Theory Comput. 13(7) pp 3185--3197 (2017).
+    (doi: 10.1021/acs.jctc.7b00174)
+
+
+                         Additional Contributions by
+    P. Kraus, H. Kruse, M. H. Lechner, M. C. Schieber, and R. A. Shaw
+
+    -----------------------------------------------------------------------
+
+
+    Psi4 started on: Tuesday, 15 January 2019 11:43AM
+
+    Process ID: 89421
+    Host:       blogin3
+    PSIDATADIR: /home/kmoore/miniconda/envs/esenv/share/psi4
+    Memory:     500.0 MiB
+    Threads:    1
+    
+  ==> Input File <==
+
+--------------------------------------------------------------------------
+# Psi4 1.0 Computation 
+
+molecule {
+ 0 3
+ C          0.0000000000        0.0696643962        0.0000000000
+ H          0.0000000000        0.5136378019       -1.0016934426
+ H          0.0000000000        0.5136378019        1.0016934426
+ units angstrom
+}
+
+set reference uhf
+set scf_type pk
+set basis 6-31G*
+
+energy('scf')
+
+--------------------------------------------------------------------------
+
+*** tstart() called on blogin3
+*** at Tue Jan 15 11:43:51 2019
+
+   => Loading Basis Set <=
+
+    Name: 6-31G*
+    Role: ORBITAL
+    Keyword: BASIS
+    atoms 1   entry C          line   111 file /home/kmoore/miniconda/envs/esenv/share/psi4/basis/6-31gs.gbs 
+    atoms 2-3 entry H          line    44 file /home/kmoore/miniconda/envs/esenv/share/psi4/basis/6-31gs.gbs 
+
+
+         ---------------------------------------------------------
+                                   SCF
+            by Justin Turney, Rob Parrish, Andy Simmonett
+                             and Daniel Smith
+                              UHF Reference
+                        1 Threads,    500 MiB Core
+         ---------------------------------------------------------
+
+  ==> Geometry <==
+
+    Molecular point group: c2v
+    Full point group: C2v
+
+    Geometry (in Angstrom), charge = 0, multiplicity = 3:
+
+       Center              X                  Y                   Z               Mass       
+    ------------   -----------------  -----------------  -----------------  -----------------
+         C            0.000000000000     0.000000000000    -0.063849697986    12.000000000000
+         H           -0.000000000000     1.001693442600     0.380123707714     1.007825032070
+         H            0.000000000000    -1.001693442600     0.380123707714     1.007825032070
+
+  Running in c2v symmetry.
+
+  Rotational constants: A =     49.55637  B =      8.33512  C =      7.13504 [cm^-1]
+  Rotational constants: A = 1485662.44834  B = 249880.51814  C = 213903.14705 [MHz]
+  Nuclear repulsion =    6.059774717871673
+
+  Charge       = 0
+  Multiplicity = 3
+  Electrons    = 8
+  Nalpha       = 5
+  Nbeta        = 3
+
+  ==> Algorithm <==
+
+  SCF Algorithm Type is PK.
+  DIIS enabled.
+  MOM disabled.
+  Fractional occupation disabled.
+  Guess Type is GWH.
+  Energy threshold   = 1.00e-06
+  Density threshold  = 1.00e-06
+  Integral threshold = 0.00e+00
+
+  ==> Primary Basis <==
+
+  Basis Set: 6-31G*
+    Blend: 6-31G*
+    Number of shells: 10
+    Number of basis function: 19
+    Number of Cartesian functions: 19
+    Spherical Harmonics?: false
+    Max angular momentum: 2
+
+  ==> Pre-Iterations <==
+
+   -------------------------------------------------------
+    Irrep   Nso     Nmo     Nalpha   Nbeta   Ndocc  Nsocc
+   -------------------------------------------------------
+     A1        10      10       0       0       0       0
+     A2         1       1       0       0       0       0
+     B1         3       3       0       0       0       0
+     B2         5       5       0       0       0       0
+   -------------------------------------------------------
+    Total      19      19       5       3       3       2
+   -------------------------------------------------------
+
+  ==> Integral Setup <==
+
+  Using in-core PK algorithm.
+   Calculation information:
+      Number of atoms:                   3
+      Number of AO shells:              10
+      Number of primitives:             23
+      Number of atomic orbitals:        19
+      Number of basis functions:        19
+
+      Integral cutoff                 1.00e-12
+      Number of threads:                 1
+
+  Performing in-core PK
+  Using 36290 doubles for integral storage.
+  We computed 1540 shell quartets total.
+  Whereas there are 1540 unique shell quartets.
+
+  ==> DiskJK: Disk-Based J/K Matrices <==
+
+    J tasked:                  Yes
+    K tasked:                  Yes
+    wK tasked:                  No
+    Memory (MB):               375
+    Schwarz Cutoff:          1E-12
+
+    OpenMP threads:              1
+
+  Minimum eigenvalue in the overlap matrix is 3.7438749803E-02.
+  Using Symmetric Orthogonalization.
+
+  SCF Guess: Generalized Wolfsberg-Helmholtz.
+
+  ==> Iterations <==
+
+                        Total Energy        Delta E     RMS |[F,P]|
+
+   @UHF iter   1:   -38.33141782930860   -3.83314e+01   8.36495e-02 
+   @UHF iter   2:   -38.89214028482846   -5.60722e-01   2.04973e-02 DIIS
+   @UHF iter   3:   -38.91812463892249   -2.59844e-02   3.78412e-03 DIIS
+   @UHF iter   4:   -38.92008684031264   -1.96220e-03   1.44155e-03 DIIS
+   @UHF iter   5:   -38.92052777165674   -4.40931e-04   4.53258e-04 DIIS
+   @UHF iter   6:   -38.92057903644597   -5.12648e-05   1.33928e-04 DIIS
+   @UHF iter   7:   -38.92058342431464   -4.38787e-06   4.49091e-05 DIIS
+   @UHF iter   8:   -38.92058397437147   -5.50057e-07   1.13222e-05 DIIS
+   @UHF iter   9:   -38.92058400937643   -3.50050e-08   2.35644e-06 DIIS
+   @UHF iter  10:   -38.92058401083311   -1.45668e-09   3.44812e-07 DIIS
+
+  ==> Post-Iterations <==
+
+   @Spin Contamination Metric:   1.624106317E-02
+   @S^2 Expected:                2.000000000E+00
+   @S^2 Observed:                2.016241063E+00
+   @S   Expected:                1.000000000E+00
+   @S   Observed:                1.000000000E+00
+
+    Orbital Energies [Eh]
+    ---------------------
+
+    Alpha Occupied:                                                       
+
+       1A1   -11.264235     2A1    -0.941365     1B2    -0.606271  
+       3A1    -0.449352     1B1    -0.407841  
+
+    Alpha Virtual:                                                        
+
+       4A1     0.248585     2B2     0.322539     5A1     0.720686  
+       2B1     0.729150     3B2     0.784569     6A1     0.802933  
+       7A1     1.140681     4B2     1.191569     1A2     1.904328  
+       8A1     1.912299     3B1     1.913800     5B2     2.385345  
+       9A1     2.436059    10A1     4.378329  
+
+    Beta Occupied:                                                        
+
+       1A1   -11.216002     2A1    -0.766836     1B2    -0.574180  
+
+    Beta Virtual:                                                         
+
+       3A1     0.146352     1B1     0.176452     4A1     0.283555  
+       2B2     0.358487     5A1     0.813929     3B2     0.818361  
+       2B1     0.900050     6A1     0.916665     7A1     1.186678  
+       4B2     1.235891     1A2     2.023907     8A1     2.091246  
+       3B1     2.099859     5B2     2.456821     9A1     2.510273  
+      10A1     4.446380  
+
+    Final Occupation by Irrep:
+             A1    A2    B1    B2 
+    DOCC [     2,    0,    0,    1 ]
+    SOCC [     1,    0,    1,    0 ]
+
+  Energy converged.
+
+  @UHF Final Energy:   -38.92058401083311
+
+   => Energetics <=
+
+    Nuclear Repulsion Energy =              6.0597747178716732
+    One-Electron Energy =                 -63.7346357699587642
+    Two-Electron Energy =                  18.7542770412539817
+    Total Energy =                        -38.9205840108331103
+
+
+  UHF NO Occupations:
+  HONO-2 :    2 A1 1.9941250
+  HONO-1 :    1 B1 1.0000000
+  HONO-0 :    3 A1 1.0000000
+  LUNO+0 :    4 A1 0.0058750
+  LUNO+1 :    2 B2 0.0022636
+  LUNO+2 :    5 A1 0.0000018
+  LUNO+3 :    6 A1 0.0000000
+
+
+
+Properties will be evaluated at   0.000000,   0.000000,   0.000000 [a0]
+
+Properties computed using the SCF density matrix
+
+  Nuclear Dipole Moment: [e a0]
+     X:     0.0000      Y:     0.0000      Z:     0.7127
+
+  Electronic Dipole Moment: [e a0]
+     X:     0.0000      Y:     0.0000      Z:    -0.4843
+
+  Dipole Moment: [e a0]
+     X:     0.0000      Y:     0.0000      Z:     0.2284     Total:     0.2284
+
+  Dipole Moment: [D]
+     X:     0.0000      Y:     0.0000      Z:     0.5805     Total:     0.5805
+
+
+*** tstop() called on blogin3 at Tue Jan 15 11:43:51 2019
+Module time:
+	user time   =       0.14 seconds =       0.00 minutes
+	system time =       0.01 seconds =       0.00 minutes
+	total time  =          0 seconds =       0.00 minutes
+Total time:
+	user time   =       0.14 seconds =       0.00 minutes
+	system time =       0.01 seconds =       0.00 minutes
+	total time  =          0 seconds =       0.00 minutes
+
+    Psi4 stopped on: Tuesday, 15 January 2019 11:43AM
+    Psi4 wall time for execution: 0:00:00.20
+
+*** Psi4 exiting successfully. Buy a developer a beer!

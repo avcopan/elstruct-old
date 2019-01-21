@@ -1,18 +1,16 @@
 """
-Library of functions to assess the job status of a Orca 4.0 job using the output file.
+Library of functions to assess the job status of a Orca 4.0 job
+using the output file.
 
 """
 
 __authors__ = "Kevin Moore, Andreas Copan"
-__updated__ = "2019-01-15"
+__updated__ = "2019-01-18"
 
 from ..rere import find as ref
-from ..rere import pattern as rep
-from ..rere import pattern_lib as relib
-from ... import params
 
 
-##### Series of functions to read job status information #####
+# Series of functions to read job status information
 
 def error_msg_reader(output_string):
     """ Searches the output file for possible error messages.
@@ -32,6 +30,7 @@ def error_msg_reader(output_string):
             error_msg = pattern
 
     return error_msg
+
 
 def complete_msg_reader(output_string):
     """ Checks if the job completes successfully.

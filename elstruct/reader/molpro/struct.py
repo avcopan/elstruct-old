@@ -1,5 +1,6 @@
 """
-Library of functions to retrieve structural information from a Molpro 2015 output file
+Library of functions to retrieve structural information
+from a Molpro 2018 output file
 
 Structural currently supported:
 (1) final optimized geometry in Cartesian (xyz) coordinates;
@@ -11,31 +12,30 @@ Structural currently supported:
 """
 
 __authors__ = "Kevin Moore, Andreas Copan"
-__updated__ = "2019-01-15"
+__updated__ = "2019-01-18"
 
 from ..rere import parse as repar
-from ..rere import find as ref
 from ..rere import pattern as rep
 from ..rere import pattern_lib as relib
 from ... import params
 from ... import phys_constants
 
 
-##### Series of functions to read structural information #####
+# Series of functions to read structural information
 
 def optimized_cartesian_geometry_reader(output_string):
     """ Retrieves the optimized geometry in Cartesian xyz coordinates.
         Units of Angstrom.
     """
 
-    # Pattern to idetify block of output string where optimized geometry is located
+    # Pattern to idetify text block of where optimized geometry is located
     opt_geom_xyz_begin_pattern = 'END OF GEOMETRY OPTIMIZATION'
     opt_geom_xyz_end_pattern = 'Geometry written to block'
 
-    # Obtain block of output string containing the optimized geometry in xyz coordinates
+    # Obtain text block of containing the optimized geometry in xyz coordinates
     opt_geom_xyz_block = repar.block(opt_geom_xyz_begin_pattern,
-                               opt_geom_xyz_end_pattern,
-                               output_string)
+                                     opt_geom_xyz_end_pattern,
+                                     output_string)
 
     # Pattern for the xyz coordinate of each atom
     opt_geom_xyz_pattern = (
@@ -48,9 +48,11 @@ def optimized_cartesian_geometry_reader(output_string):
         rep.capturing(relib.FLOAT)
     )
 
-    cart_geom = repar.pattern_parser_cartesian_geometry(opt_geom_xyz_pattern, opt_geom_xyz_block)
+    cart_geom = repar.pattern_parser_cartesian_geometry(
+        opt_geom_xyz_pattern, opt_geom_xyz_block)
 
     return cart_geom
+
 
 def opt_geom_internal_reader(output_string):
     """ Retrieves the optimized geometry in internal coordinates.
@@ -62,10 +64,10 @@ def opt_geom_internal_reader(output_string):
     opt_geom_internal_begin_pattern = 'Optimized variables'
     opt_geom_internal_end_pattern = '*********************'
 
-    # Obtain block of output string containing the optimized geometry in xyz coordinates
+    # Obtain text block ontaining the optimized geometry in xyz coordinates
     opt_geom_internal_block = repar.block(opt_geom_internal_begin_pattern,
-                                    opt_geom_internal_end_pattern,
-                                    output_string)
+                                          opt_geom_internal_end_pattern,
+                                          output_string)
 
     # Pattern for the xyz coordinate of each atom
     opt_geom_internal_pattern = (
@@ -79,9 +81,11 @@ def opt_geom_internal_reader(output_string):
     )
 
     # Obtain the xyz coordinates from the block
-    opt_geom_internal = repar.pattern_parser_1(opt_geom_internal_pattern, opt_geom_internal_block)
+    opt_geom_internal = repar.pattern_parser_1(
+        opt_geom_internal_pattern, opt_geom_internal_block)
 
     return opt_geom_internal
+
 
 def init_geom_xyz_reader(output_string):
     """ Retrieves the initial geometry in Cartesian xyz coordinates.
@@ -92,10 +96,11 @@ def init_geom_xyz_reader(output_string):
     init_geom_internal_begin_pattern = 'ATOMIC COORDINATES'
     init_geom_internal_end_pattern = 'Bond lengths in Bohr (Angstrom)'
 
-    # Obtain block of output string containing the optimized geometry in xyz coordinates
-    init_geom_internal_block = repar.block(init_geom_internal_begin_pattern,
-                                     init_geom_internal_end_pattern,
-                                     output_string)
+    # Obtain text block containing the optimized geometry in xyz coordinates
+    init_geom_internal_block = repar.block(
+        init_geom_internal_begin_pattern,
+        init_geom_internal_end_pattern,
+        output_string)
 
     init_geom_internal_pattern = (
         relib.INTEGER +
@@ -112,35 +117,107 @@ def init_geom_xyz_reader(output_string):
     )
 
     # Obtain the xyz coordinates from the block
-    init_geom_xyz = repar.pattern_parser_2(init_geom_internal_pattern, init_geom_internal_block)
-
+    init_geom_xyz = repar.pattern_parser_2(
+        init_geom_internal_pattern, init_geom_internal_block)
 
     return init_geom_xyz
 
-def init_geom_internal_reader(output_string):
+
+def init_internal_geometry_reader(output_string):
     """ Retrieves the initial geometry in internal coordinates.
         Units of Angstrom and degrees.
     """
 
+    # Retrieve the Z-Matrix
+
     # Initial Z-matrix definition
-    init_geom_internal_begin_pattern = 'Primary working directories'
-    init_geom_internal_end_pattern = 'Variables initialized'
+    init_z_matrix_begin_pattern = 'Geometry = {'
+    init_z_matrix_end_pattern = 'Variables initialized'
+
+    # Get the text block containing the Z-matrix
+    init_z_matrix_block = repar.block(
+        init_z_matrix_begin_pattern,
+        init_z_matrix_end_pattern,
+        output_string)
+
+    # Pattern for the each line of the Z-matrix
+    one_atom_line = (
+        relib.UPPERCASE_LETTER +
+        rep.maybe(relib.INTEGER)
+    )
+    two_atom_line = one_atom_line + (
+        rep.one_or_more(relib.WHITESPACE) +
+        rep.maybe(rep.one_or_more(relib.ANY_CHAR)) +
+        relib.INTEGER +
+        rep.one_or_more(relib.WHITESPACE) +
+        rep.one_or_more(relib.ANY_CHAR) +
+        rep.maybe(relib.INTEGER)
+    )
+    three_atom_line = two_atom_line + (
+        rep.one_or_more(relib.WHITESPACE) +
+        rep.maybe(rep.one_or_more(relib.ANY_CHAR)) +
+        relib.INTEGER +
+        rep.one_or_more(relib.WHITESPACE) +
+        rep.one_or_more(relib.ANY_CHAR) +
+        rep.maybe(relib.INTEGER)
+    )
+    four_atom_line = three_atom_line + (
+        rep.one_or_more(relib.WHITESPACE) +
+        rep.maybe(rep.one_or_more(relib.ANY_CHAR)) +
+        relib.INTEGER +
+        rep.one_or_more(relib.WHITESPACE) +
+        rep.one_or_more(relib.ANY_CHAR) +
+        rep.maybe(relib.INTEGER)
+    )
+
+    init_z_matrix_pattern = (
+        rep.capturing(
+            rep.one_of_these(
+                [one_atom_line, two_atom_line, three_atom_line, four_atom_line]
+            )
+        )
+    )
+
+    print('\n\nZMATRIX\n\n\n')
+
+    # Obtain the Z-matrix from the text block
+    init_z_matrix = repar.pattern_parser_2(
+        init_z_matrix_pattern, init_z_matrix_block)
 
     # Initial internal coords defs
-    init_geom_internal_begin_pattern = '***  PROGRAM SYSTEM MOLPRO  ***'
-    init_geom_internal_end_pattern = 'Geometry written to block  1 of record 700'
+    init_coord_begin_pattern = 'ZUNIT=' + rep.one_or_more(relib.UPPERCASE_LETTER)
+    init_coord_end_pattern = 'Geometry written to block  1 of record 700'
 
+    # Get the text block containing the internal coord defs
+    init_internal_coord_block = repar.block(
+        init_coord_begin_pattern,
+        init_coord_end_pattern,
+        output_string)
 
-    internal_coord_pattern = (
+    # Pattern for the each of the internal coordinates
+    init_internal_coord_pattern = (
         'SETTING' +
         rep.capturing(
             rep.one_or_more(relib.ANY_CHAR) +
+            rep.maybe(rep.one_or_more(relib.INTEGER)) +
+            rep.one_or_more(relib.WHITESPACE) +
+            '=' +
             rep.one_or_more(relib.WHITESPACE) +
             relib.FLOAT
         )
     )
 
-    return
+    # Obtain the Z-matrix from the text block
+    init_coord_internal = repar.pattern_parser_2(
+        init_internal_coord_pattern, init_internal_coord_block)
+
+    print('\n\nCOORDS\n\n\n')
+
+    # Put the Z-matrix and internal coordinates together
+    init_geom_internal = init_z_matrix + init_coord_internal
+
+    return init_geom_internal
+
 
 def equil_rot_constant_reader(output_string):
     """ Retrieves the equilibrium rotational constant of the optimized geometry.
@@ -156,29 +233,30 @@ def equil_rot_constant_reader(output_string):
         rep.one_or_more(relib.WHITESPACE) +
         rep.capturing(relib.FLOAT) +
         rep.one_or_more(relib.WHITESPACE) +
-        'GHz' #+
-        #rep.one_or_more(relib.WHITESPACE) +
-        #'\(calculated with average atomic masses\)'
+        'GHz' +
+        rep.one_or_more(relib.WHITESPACE) +
+        rep.escape('(calculated with average atomic masses)')
     )
 
     # Obtain equil_const string
-    all_rot_consts = repar.list_float(equil_rot_const_pattern, output_string)
+    all_rot_consts = repar.pattern_parser_list_single_str(equil_rot_const_pattern, output_string)
 
     # Remove any instances of 0.0000s as well as duplicates
-    rot_const_ghz = list(set([const for const in all_rot_consts if const != 0.0]))
+    rot_const_ghz = tuple((const for const in all_rot_consts if const != 0.0))
 
     # Convert from GHz to cm-1
-    equil_rot_const = [const * phys_constants.GHZ_TO_CM for const in rot_const_ghz]
+    equil_rot_const = tuple((const * phys_constants.GHZ_TO_CM
+                             for const in rot_const_ghz))
 
     return equil_rot_const
 
 
-##### Dictionary for strings to find the geometries in the files #####
+# Dictionary for strings to find the geometries in the files
 
 STRUCTURE_READERS = {
     params.STRUCTURE.OPT_GEOM_XYZ: optimized_cartesian_geometry_reader,
-    params.STRUCTURE.OPT_GEOM_INT: opt_geom_internal_reader,
-    params.STRUCTURE.INIT_GEOM_XYZ: init_geom_xyz_reader,
-    params.STRUCTURE.INIT_GEOM_INT: init_geom_internal_reader,
-    params.STRUCTURE.EQUIL_ROT_CONST: equil_rot_constant_reader,
+    # params.STRUCTURE.OPT_GEOM_INT: opt_geom_internal_reader,
+    # params.STRUCTURE.INIT_GEOM_XYZ: init_geom_xyz_reader,
+    params.STRUCTURE.INIT_GEOM_INT: init_internal_geometry_reader,
+    # params.STRUCTURE.EQUIL_ROT_CONST: equil_rot_constant_reader,
 }

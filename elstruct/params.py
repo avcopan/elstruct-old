@@ -8,23 +8,34 @@ __updated__ = "2019-01-11"
 class METHOD():
     """ Ab initio electronic structure methods
     """
-    # Hartree-Fock methods #
+    # Hartree-Fock methods
     RHF = 'rhf'
     UHF = 'uhf'
     ROHF = 'rohf'
-    # Single-reference correlated methods #
+    # Single-reference correlated methods
     RHF_MP2 = 'rhf-mp2'
+    UHF_MP2 = 'uhf-mp2'
+    ROHF_MP2 = 'rohf-mp2'
     UHF_UMP2 = 'uhf-ump2'
     ROHF_RMP2 = 'rohf-rmp2'
     RHF_CCSD = 'rhf-ccsd'
+    UHF_CCSD = 'uhf-ccsd'
+    ROHF_CCSD = 'rohf-ccsd'
     ROHF_UCCSD = 'rohf-uccsd'
     ROHF_RCCSD = 'rohf-rccsd'
     RHF_CCSD_T = 'rhf-ccsd(t)'
+    UHF_CCSD_T = 'uhf-ccsd(t)'
+    ROHF_CCSD_T = 'rohf-ccsd(t)'
     ROHF_UCCSD_T = 'rohf-uccsd(t)'
     ROHF_RCCSD_T = 'rohf-rccsd(t)'
-    # Custom, user-defined method #
+    RHF_CCSDT = 'rhf-ccsdt'
+    RHF_CCSDT_Q = 'rhf-ccsdt(q)'
+    # DFT
+    DFT = 'dft'
+    # Custom, user-defined method
     CUSTOM = 'custom'
     OPT = 'opt'
+
 
 class STRUCTURE():
     """ Types of molecular structure
@@ -37,9 +48,11 @@ class STRUCTURE():
     # Rotational Constants #
     EQUIL_ROT_CONST = 'equil_rot_constant'
 
+
 class FREQUENCY():
     """ Frequency Information
-    """    
+    """
+
     HARM_FREQ = 'harm_freq'
     ANHARM_FREQ = 'anharm_freq'
     HARM_ZPVE = 'harm_zpve'
@@ -47,7 +60,8 @@ class FREQUENCY():
     ANHARM_MATRIX = 'anharm_matrix'
     CENTRIG_DIST_CONST = 'centrig_dist_const'
     VIBROT_MATRIX = 'vibrot_matrix'
-    
+
+
 class SURFACE():
     """ Information about the Potential Energy Surface
     """
@@ -56,10 +70,12 @@ class SURFACE():
     HESSIAN_XYZ = 'hessian_xyz'
     HESSIAN_INT = 'hessian_int'
 
+
 class PROPERTY():
     """ Molecular Properties of interest
     """
     DIPOLE_MOM = 'dipole_moment'
+
 
 class JOBTYPE():
     """ Various job types
@@ -70,6 +86,7 @@ class JOBTYPE():
     ANHARM_VIB_FREQ = 'anharm_vib_freq'
     OPT_AND_HARM_FREQ = 'opt_and_freq'
     CUSTOM_JOB = 'custom_job'
+
 
 class PROGRAM():
     """ Programs to be called
@@ -83,6 +100,7 @@ class PROGRAM():
     ORCA = 'orca4'
     PSI4 = 'psi4'
     QCHEM = 'qchem'
+
 
 class FILE_EXTENSION():
     """ Data file extensions

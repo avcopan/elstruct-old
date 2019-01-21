@@ -3,4 +3,7 @@ disable=
     too-many-locals,
     too-many-arguments,
     too-few-public-methods,
-    redefined-builtin
+    redefined-builtin,
+    duplicate-code,
+    consider-iterating-dictionary,
+    superfluous-parens 

@@ -1,5 +1,7 @@
-""" .xyz-based functions
 """
+.xyz-based functions
+"""
+
 import re
 from .reader.rere.pattern_lib import WHITESPACE
 from .reader.rere.pattern_lib import UNSIGNED_INTEGER

@@ -1,5 +1,7 @@
-""" thread I/O-bound tasks through a queue with named workers
 """
+Thread I/O-bound tasks through a queue with named workers
+"""
+
 from queue import Queue
 from queue import Empty as EmptyQueue
 from threading import Thread
