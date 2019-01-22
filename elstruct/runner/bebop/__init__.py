@@ -24,12 +24,15 @@ TEMPLATE_FILES = {
 }
 
 
-def submit(program, account, partition='bdwall',
-           nnodes=1, njobs=1, ncores_per_node=1,
-           walltime='2:00:00', jobname='run',
-           input_name=None, output_name=None,
-           scratch='/scratch/$USER',
-           auto_submit=True, background=False):
+def submit(program, account, 
+           partition,
+           nnodes, njobs, 
+           ncores_per_node=1,
+           walltime, 
+           jobname=,
+           input_name, output_name,
+           scratch,
+           auto_submit, background):
     ''' Function writes a Bebop job submission script
         by filling in templates for electronic structure programs
         and then submits the job.

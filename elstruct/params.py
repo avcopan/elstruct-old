@@ -102,6 +102,13 @@ class PROGRAM():
     QCHEM = 'qchem'
 
 
+class NODES():
+    """ Compute nodes we run stuff on
+    """
+    BLUES = 'blues'
+    BEBOP = 'bebop'
+
+
 class FILE_EXTENSION():
     """ Data file extensions
     """

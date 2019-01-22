@@ -1,0 +1,19 @@
+***,Single Point Energy
+
+memory,2500,m
+
+angstrom
+geometry = {
+O 0.0 0.0 0.3281287143
+H 0.0 0.7553917259 0.9008716339
+H 0.0 -0.7553917259 0.9008716339
+}
+
+set,spin=0
+set,charge=0
+
+basis=6-31G*
+
+{rhf}
+{optg}
+{freq}

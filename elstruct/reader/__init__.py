@@ -1,9 +1,15 @@
 """
 Modules to read information from electronic structure codes
 """
+
 import importlib
 from ..params import PROGRAM
 from ..phys_constants import CM_TO_HART
+
+
+__authors__ = "Kevin Moore and Andreas Copan"
+__updated__ = "2019-01-21"
+
 
 PACKAGE = 'elstruct.reader'
 PROGRAM_MODULE_NAMES = {
