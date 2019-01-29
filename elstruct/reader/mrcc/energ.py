@@ -32,7 +32,7 @@ def rhf_uhf_reader(output_string):
     )
 
     # Obtain the RHF/UHF energy
-    hf_energy = repar.pattern_parser_single_float(hf_pattern, output_string)
+    hf_energy = repar.energy_pattern_parser(hf_pattern, output_string)
 
     return hf_energy
 
@@ -60,9 +60,9 @@ def rohf_reader(output_string):
     )
 
     # Obtain the ROHF energy
-    rohf_energy = repar.pattern_parser_single_float(rohf_pattern, output_string)
+    rohf_energy = repar.energy_pattern_parser(rohf_pattern, output_string)
     if rohf_energy is None:
-        rohf_energy = repar.pattern_parser_single_float(rohf_pattern_2, output_string)
+        rohf_energy = repar.energy_pattern_parser(rohf_pattern_2, output_string)
 
     return rohf_energy
 
@@ -85,9 +85,9 @@ def mp2_reader(output_string):
     )
 
     # Obtain the RHF-MP2 energy
-    mp2_energy = repar.pattern_parser_single_float(mp2_pattern, output_string)
+    mp2_energy = repar.energy_pattern_parser(mp2_pattern, output_string)
     if mp2_energy is None:
-        mp2_energy = repar.pattern_parser_single_float(mp2_pattern_2, output_string)
+        mp2_energy = repar.energy_pattern_parser(mp2_pattern_2, output_string)
 
     return mp2_energy
 
@@ -104,7 +104,7 @@ def ccsd_reader(output_string):
     )
 
     # Obtain the CCSD energy
-    ccsd_energy = repar.pattern_parser_single_float(ccsd_pattern, output_string)
+    ccsd_energy = repar.energy_pattern_parser(ccsd_pattern, output_string)
 
     return ccsd_energy
 
@@ -121,7 +121,7 @@ def ccsd_t_reader(output_string):
     )
 
     # Obtain the CCSD(T) energy
-    ccsd_t_energy = repar.pattern_parser_single_float(ccsd_t_pattern, output_string)
+    ccsd_t_energy = repar.energy_pattern_parser(ccsd_t_pattern, output_string)
 
     return ccsd_t_energy
 
@@ -138,7 +138,7 @@ def ccsdt_reader(output_string):
     )
 
     # Obtain the CCSDT(Q) energy
-    ccsdt_energy = repar.pattern_parser_single_float(ccsdt_pattern, output_string)
+    ccsdt_energy = repar.energy_pattern_parser(ccsdt_pattern, output_string)
 
     return ccsdt_energy
 
@@ -155,7 +155,7 @@ def ccsdt_q_reader(output_string):
     )
 
     # Obtain the CCSDT(Q) energy
-    ccsdt_q_energy = repar.pattern_parser_single_float(ccsdt_q_pattern, output_string)
+    ccsdt_q_energy = repar.energy_pattern_parser(ccsdt_q_pattern, output_string)
 
     return ccsdt_q_energy
 
@@ -164,11 +164,11 @@ def ccsdt_q_reader(output_string):
 
 ENERGY_READERS = {
     params.METHOD.RHF: rhf_uhf_reader,
-    params.METHOD.UHF: rhf_uhf_reader,
-    params.METHOD.ROHF: rohf_reader,
     params.METHOD.RHF_MP2: mp2_reader,
     params.METHOD.RHF_CCSD: ccsd_reader,
     params.METHOD.RHF_CCSD_T: ccsd_t_reader,
     params.METHOD.RHF_CCSDT: ccsdt_reader,
     params.METHOD.RHF_CCSDT_Q: ccsdt_q_reader,
+    params.METHOD.UHF: rhf_uhf_reader,
+    params.METHOD.ROHF: rohf_reader,
 }

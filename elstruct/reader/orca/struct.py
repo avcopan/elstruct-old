@@ -17,58 +17,57 @@ __updated__ = "2019-01-18"
 from ..rere import parse as repar
 from ..rere import pattern as rep
 from ..rere import pattern_lib as relib
-from ... import params
-
 
 # Series of functions to read structural information
 
-def all_geom_xyz_reader(output_string):
+def optimized_cartesian_geometry_reader(output_string):
     """ Retrieves the optimized geometry in Cartesian xyz coordinates.
         Units of Angstrom and degrees.
     """
 
-    # Pattern to idetify text block where optimized geometry is located
-    all_geom_xyz_begin_pattern = 'CARTESIAN COORDINATES (ANGSTROEM)'
-    all_geom_xyz_end_pattern = 'CARTESIAN COORDINATES (A.U.)'
+    # Pattern to identify text block where the geometry is located
+    cart_geom_begin_pattern = 'CARTESIAN COORDINATES (ANGSTROEM)'
+    cart_geom_end_pattern = 'CARTESIAN COORDINATES (A.U.)'
 
-    # Obtain text block of containing the optimized geometry in xyz coordinates
-    all_geom_xyz_block = repar.block(all_geom_xyz_begin_pattern,
-                                     all_geom_xyz_end_pattern,
-                                     output_string)
+    # Obtain text block containing the geometry
+    cart_geom_block = repar.block(cart_geom_begin_pattern,
+                                  cart_geom_end_pattern,
+                                  output_string)
 
-    # Pattern for the xyz coordinate of each atom
-    all_geom_xyz_pattern = (
-        rep.one_or_more(relib.ANY_CHAR) +
+    # Geometry Line Pattern: CHARS  FLOAT  FLOAT  FLOAT  NEWLINE
+    cart_geom_pattern = (
+        rep.capturing(rep.one_or_more(relib.NONWHITESPACE)) +
         rep.one_or_more(relib.WHITESPACE) +
-        rep.one_or_more(relib.FLOAT) +
+        rep.capturing(relib.FLOAT) +
         rep.one_or_more(relib.WHITESPACE) +
-        rep.one_or_more(relib.FLOAT) +
+        rep.capturing(relib.FLOAT) +
         rep.one_or_more(relib.WHITESPACE) +
-        rep.one_or_more(relib.FLOAT)
+        rep.capturing(relib.FLOAT)
     )
 
-    cart_geom = repar.pattern_parser_cartesian_geometry(
-        all_geom_xyz_pattern, all_geom_xyz_block)
+    # Retrieve the geometry
+    cart_geom = repar.cartesian_geometry_pattern_parser(
+        cart_geom_pattern, cart_geom_block)
 
     return cart_geom
 
 
-def all_geom_internal_reader(output_string):
+def optimized_internal_geometry_reader(output_string):
     """ Retrieves the optimized geometry in internal coordinates.
         Units of Angstrom and degrees.
     """
 
-    # internal coords of optimized geom
-    all_geom_internal_begin_pattern = 'INTERNAL COORDINATES (ANGSTROEM)'
-    all_geom_internal_end_pattern = 'INTERNAL COORDINATES (A.U.)'
+    # Pattern to identify text block where the geometry is located
+    int_geom_begin_pattern = 'INTERNAL COORDINATES (ANGSTROEM)'
+    int_geom_end_pattern = 'INTERNAL COORDINATES (A.U.)'
 
-    # Obtain text block containing the optimized geometry in xyz coordinates
-    all_geom_internal_block = repar.block(
-        all_geom_internal_begin_pattern,
-        all_geom_internal_end_pattern,
-        output_string)
+    # Obtain text block containing the geometry
+    int_geom_block = repar.block(int_geom_begin_pattern,
+                                 int_geom_end_pattern,
+                                 output_string)
 
-    all_geom_internal_pattern = (
+    # Geometry Line Pattern: CHARS  INT  INT  INT  FLOAT  FLOAT  FLOAT  NEWLINE
+    int_geom_pattern = (
         rep.one_or_more(relib.ANY_CHAR) +
         rep.one_or_more(relib.WHITESPACE) +
         rep.one_or_more(relib.INTEGER) +
@@ -86,14 +85,6 @@ def all_geom_internal_reader(output_string):
 
     # Obtain the xyz coordinates from the block
     all_geom_internal = repar.pattern_parser_1(
-        all_geom_internal_pattern, all_geom_internal_block)
+        int_geom_pattern, int_geom_block)
 
     return all_geom_internal
-
-
-# Dictionary for strings to find the geometries in the files
-
-STRUCTURE_READERS = {
-    params.STRUCTURE.OPT_GEOM_XYZ: all_geom_xyz_reader,
-    params.STRUCTURE.OPT_GEOM_INT: all_geom_internal_reader,
-}

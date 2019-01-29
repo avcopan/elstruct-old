@@ -4,7 +4,7 @@
 CWD=/blues/gpfs/home/kmoore/elstruct/tests/reader/data/energy/orca/rhf
 
 # Set host node to the one specified by the user
-HOST=b440
+HOST=b460
 
 # Set paths to Orca and MPI
 export PATH=/soft/orca/orca_4_0_1_2_linux_x86-64_openmpi202:/soft/spack-0.10.0/opt/spack/linux-centos6-x86_64/intel-17.0.2/openmpi-2.0.2-pyxkvzeiklfv4v67y46xheicu5j2no4v/bin:$PATH

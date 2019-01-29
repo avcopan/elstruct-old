@@ -14,12 +14,12 @@ from ..rere import pattern_lib as relib
 
 # Series of functions to read the frequency information
 
-def harm_vib_freqs_reader(output_string):
+def harmonic_frequencies_reader(output_string):
     """ Reads the harmonic vibrational frequencies from the output file.
         Returns the frequencies as a list of floats in cm-1.
     """
 
-    # Pattern to locate all frequencies in a string
+    # Frequency Line Pattern: Freq [cm^-1]  FLOAT  FLOAT  ... NEWLINE 
     harm_vib_freq_pattern = (
         rep.escape('Freq [cm^-1]') +
         rep.one_or_more(relib.WHITESPACE) +
@@ -33,9 +33,6 @@ def harm_vib_freqs_reader(output_string):
     )
 
     # Obtain the frequencies for all degrees-of-freedom
-    all_freqs = repar.pattern_parser_list_mult_str(harm_vib_freq_pattern, output_string)
+    harm_freqs = repar.harmonic_frequencies_pattern_parser(harm_vib_freq_pattern, output_string)
 
-    # Remove the zero frequencies
-    vib_freqs = tuple((freq for freq in all_freqs if freq != 0.0))
-
-    return vib_freqs
+    return harm_freqs

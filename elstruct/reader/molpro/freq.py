@@ -31,16 +31,36 @@ def harmonic_frequencies_reader(output_string):
         rep.capturing(
             rep.one_or_more(
                 relib.FLOAT +
-                rep.maybe('i') +
                 rep.one_or_more(relib.WHITESPACE)
             )
         )
     )
 
     # Obtain the frequencies for all degrees-of-freedom
-    all_freqs = repar.pattern_parser_list_mult_str(harm_vib_freq_pattern, output_string)
+    harm_freqs = repar.harmonic_frequencies_pattern_parser(harm_vib_freq_pattern, output_string)
 
-    # Remove the zero frequencies
-    vib_freqs = tuple((freq for freq in all_freqs if freq != 0.0))
+    # Obtain the imaginary frequencies
+    imag_freq_block_begin_pattern = 'Imaginary Vibration' # + rep.one_or_more(relib.WHITESPACE) + 'Wavenumber'
+    imag_freq_block_end_pattern = 'Low Vibration' # + rep.one_or_more(relib.WHITESPACE) + 'Wavenumber'
+    imag_freq_block = repar.block(
+        imag_freq_block_begin_pattern,
+        imag_freq_block_end_pattern,
+        output_string)
 
-    return vib_freqs
+    # Check if the imaginary frequency block exists, if so read freqs
+    if imag_freq_block is not None:
+        imag_freq_pattern = relib.INTEGER + rep.one_or_more(relib.WHITESPACE) + rep.capturing(relib.FLOAT)
+        imag_freqs = repar.harmonic_frequencies_pattern_parser(imag_freq_pattern, imag_freq_block)
+
+        # Relabel frequency if it is imaginary
+        harm_freqs_final = []
+        for freq in harm_freqs:
+            if freq in imag_freqs:
+                freq = -1.0 * freq
+                harm_freqs_final.insert(0, freq)
+            else:
+                harm_freqs_final.append(freq)
+    else:
+        harm_freqs_final = harm_freqs
+
+    return harm_freqs_final

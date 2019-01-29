@@ -13,15 +13,20 @@ __updated__ = "2019-01-21"
 
 PACKAGE = 'elstruct.reader'
 PROGRAM_MODULE_NAMES = {
+    PROGRAM.GAUSSIAN: 'gaussian',
     PROGRAM.MOLPRO: 'molpro',
-    PROGRAM.MOLPRO_MPPX: 'molpro',
+#    PROGRAM.MOLPRO_MPPX: 'molpro',
+    PROGRAM.ORCA: 'orca',
     PROGRAM.PSI4: 'psi4',
 }
 
 
+# FUNCTIONS TO IMPORT AND CHECK FOR READER MODULES #
+
 def _import_module(prog):
     """ import the module for a specific program
     """
+    
     assert prog in PROGRAM_MODULE_NAMES.keys()
     module_name = PROGRAM_MODULE_NAMES[prog]
     module = importlib.import_module('.'+module_name, PACKAGE)
@@ -32,6 +37,7 @@ def _import_module(prog):
 def _programs_with_attribute(attr):
     """ get a list of modules with a given attribute
     """
+    
     progs = []
     for prog in PROGRAM_MODULE_NAMES.keys():
         module = _import_module(prog)
@@ -41,9 +47,15 @@ def _programs_with_attribute(attr):
     return progs
 
 
+# FUNCTIONS TO RETRIEVE ELECTRONIC ENERGIES #
+
+
+# Assess the functionality of the energy module for each program #
+
 def energy_programs():
     """ get the list of programs implementing energy readers
     """
+    
     energy_progs = _programs_with_attribute('ENERGY_READERS')
 
     return energy_progs
@@ -52,6 +64,7 @@ def energy_programs():
 def energy_program_methods(prog):
     """ get the list of energy reader methods for a given program
     """
+    
     assert prog in energy_programs()
     module = _import_module(prog)
     energy_prog_methods = tuple(module.ENERGY_READERS.keys())
@@ -59,9 +72,12 @@ def energy_program_methods(prog):
     return energy_prog_methods
 
 
+# Function called to retrieve the energy #
+
 def energy(prog, method, output_string):
     """ Retrieves the desired electronic energy.
     """
+    
     assert prog in energy_programs()
     assert method in energy_program_methods(prog)
     module = _import_module(prog)
@@ -70,23 +86,18 @@ def energy(prog, method, output_string):
     return energy_val
 
 
+# FUNCTIONS TO RETRIEVE THE HARMONIC FREQUENCIES AND ZPVE #
+
+
+# Assess the functionality of the frequency module for each program #
+
 def harmonic_frequencies_programs():
     """ get the list of programs implementing hamonic frequency readers
     """
+    
     freq_progs = _programs_with_attribute('harmonic_frequencies_reader')
 
     return freq_progs
-
-
-def harmonic_frequencies(prog, output_string):
-    """ Reads the harmonic vibrational frequencies from the output file.
-        Returns the frequencies as a list of floats in cm-1.
-    """
-    assert prog in harmonic_frequencies_programs()
-    module = _import_module(prog)
-    freqs = module.harmonic_frequencies_reader(output_string)
-
-    return freqs
 
 
 def harmonic_zero_point_vibrational_energy_programs():
@@ -94,7 +105,23 @@ def harmonic_zero_point_vibrational_energy_programs():
         hamonic zero point vibrational energies
     """
 
-    return harmonic_frequencies_programs()
+    zpve_progs = harmonic_frequencies_programs()
+
+    return zpve_progs 
+
+
+# Functions called to retrieve the frequencies and ZPVE #
+
+def harmonic_frequencies(prog, output_string):
+    """ Reads the harmonic vibrational frequencies from the output file.
+        Returns the frequencies as a list of floats in cm-1.
+    """
+
+    assert prog in harmonic_frequencies_programs()
+    module = _import_module(prog)
+    freqs = module.harmonic_frequencies_reader(output_string)
+
+    return freqs
 
 
 def harmonic_zero_point_vibrational_energy(prog, output_string):
@@ -102,11 +129,18 @@ def harmonic_zero_point_vibrational_energy(prog, output_string):
         from the output file.
         Returns the ZPVE as a float; in Hartrees.'
     """
+
     freqs = harmonic_frequencies(prog=prog, output_string=output_string)
-    zpve = sum(freqs) / 2. * CM_TO_HART
+    
+    zpve = sum(freq for freq in freqs if freq > 0.0) / 2. * CM_TO_HART
 
     return zpve
 
+
+# FUNCTIONS TO RETRIEVE MOLECULAR GEOMETRIES #
+
+
+# Assess the functionality of the structure module for each program #
 
 def optimized_cartesian_geometry_programs():
     """ get the list of programs implementing optimized cartesian geometry readers
@@ -116,6 +150,17 @@ def optimized_cartesian_geometry_programs():
 
     return geom_progs
 
+
+def init_internal_geometry_programs():
+    """ get the list of programs implementing init internal geometry readers
+    """
+    geom_progs = _programs_with_attribute(
+        'init_internal_geometry_reader')
+
+    return geom_progs
+
+
+# Functions called to retrieve the geometries #
 
 def optimized_cartesian_geometry(prog, output_string):
     """ Retrieves the optimized geometry in Cartesian xyz coordinates.
@@ -128,15 +173,6 @@ def optimized_cartesian_geometry(prog, output_string):
     return cart_geom
 
 
-def init_internal_geometry_programs():
-    """ get the list of programs implementing init internal geometry readers
-    """
-    geom_progs = _programs_with_attribute(
-        'init_internal_geometry_reader')
-
-    return geom_progs
-
-
 def init_internal_geometry(prog, output_string):
     """ Retrieves the optimized geometry in Cartesian xyz coordinates.
         Units of Angstrom.
@@ -146,47 +182,74 @@ def init_internal_geometry(prog, output_string):
     int_geom = module.init_internal_geometry_reader(output_string)
 
     return int_geom
-# def frequency(freq, output_string):
-#     """ Retrieves the desired frequency information.
-#     """
-#
-#     assert freq in FREQUENCY_READERS.keys()
-#
-#     frequency = FREQUENCY_READERS[freq](output_string)
-#
-#     return frequency
-# def structure(struct, output_string):
-#     """ Retrieves the desired structural infromation.
-#     """
-#
-#     assert struct in STRUCTURE_READERS.keys()
-#
-#     struct = STRUCTURE_READERS[struct](output_string)
-#
-#     return struct
-# def surface(surf, output_string):
-#     """ Retrieves the desired information regarding
-#         the potential energy surface.
-#     """
-#
-#     surf_info = SURFACE_READERS[surf](output_string)
-#
-#     return surface_info
-# def mol_property(prop, output_string):
-#     """ Retrieves the desired molecular property.
-#     """
-#
-#     mol_property = PROPERTY_READERS[prop](output_string)
-#
-#     return mol_property
-# def status(output_string):
-#     """ Returns the status of a job.
-#     """
-#
-#     # Check if the job completed or if any error messages were printed
-#     job_complete = complete_msg_reader(output_string)
-#     job_error_str = error_msg_reader(output_string)
-#
-#     job_status = [complete_status, job_error_str]
-#
-#     return job_status
+
+
+# FUNCTIONS TO RETRIEVE HESSIAN #
+
+
+def cartesian_hessian_programs():
+    """ get the list of programs implementing cartesian Hessian readers
+    """
+    hess_progs = _programs_with_attribute(
+        'cartesian_hessian_reader')
+
+    return hess_progs
+
+
+def internal_hessian_programs():
+    """ get the list of programs implementing internal Hessian readers
+    """
+    hess_progs = _programs_with_attribute(
+        'internal_hessian_reader')
+
+    return hess_progs
+
+
+# Functions called to retrieve the Hessian #
+
+def cartesian_hessian(prog, output_string):
+    """ Retrieves the optimized geometry in Cartesian xyz coordinates.
+        Units of Angstrom.
+    """
+    assert prog in cartesian_hessian_programs()
+    module = _import_module(prog)
+    cart_hess = module.cartesian_hessian_reader(output_string)
+
+    return cart_hess
+
+
+def internal_hessian(prog, output_string):
+    """ Retrieves the optimized geometry in Cartesian xyz coordinates.
+        Units of Angstrom.
+    """
+    assert prog in internal_hessian_programs()
+    module = _import_module(prog)
+    int_hess = module.internal_hessian_reader(output_string)
+
+    return int_hess
+
+
+# FUNCTIONS TO RETRIEVE IRC INFORMATION #
+
+
+def irc_geometries_programs():
+    """ get the list of programs implementing cartesian Hessian readers
+    """
+    irc_progs = _programs_with_attribute(
+        'irc_geometries_reader')
+
+    return irc_progs
+
+
+# Functions called to retrieve the irc #
+
+
+def irc_geometries_reader(prog, output_string):
+    """ Retrieves the optimized geometry in Cartesian xyz coordinates.
+        Units of Angstrom.
+    """
+    assert prog in irc_geometries_programs()
+    module = _import_module(prog)
+    irc_geoms = module.irc_geometries_reader(output_string)
+
+    return irc_geoms

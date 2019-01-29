@@ -38,7 +38,7 @@ def scf_reader(output_string):
     )
 
     # Obtain the SCF energy
-    scf_energy = repar.pattern_parser_single_float(scf_pattern, output_string)
+    scf_energy = repar.energy_pattern_parser(scf_pattern, output_string)
 
     return scf_energy
 
@@ -57,7 +57,7 @@ def mp2_reader(output_string):
     )
 
     # Obtain the MP2 energy
-    mp2_energy = repar.pattern_parser_single_float(mp2_pattern, output_string)
+    mp2_energy = repar.energy_pattern_parser(mp2_pattern, output_string)
 
     return mp2_energy
 
@@ -84,9 +84,9 @@ def ccsd_reader(output_string):
     )
 
     # Obtain the CCSD energy
-    ccsd_energy = repar.pattern_parser_single_float(ccsd_pattern, output_string)
+    ccsd_energy = repar.energy_pattern_parser(ccsd_pattern, output_string)
     if ccsd_energy is None:
-        ccsd_energy = repar.pattern_parser_single_float(ccsd_pattern_2, output_string)
+        ccsd_energy = repar.energy_pattern_parser(ccsd_pattern_2, output_string)
 
     return ccsd_energy
 
@@ -105,7 +105,7 @@ def ccsd_t_reader(output_string):
     )
 
     # Obtain the CCSD(T) energy
-    ccsd_t_energy = repar.pattern_parser_single_float(ccsd_t_pattern, output_string)
+    ccsd_t_energy = repar.energy_pattern_parser(ccsd_t_pattern, output_string)
 
     return ccsd_t_energy
 
@@ -114,22 +114,9 @@ def ccsd_t_reader(output_string):
 
 ENERGY_READERS = {
     params.METHOD.RHF: scf_reader,
-    params.METHOD.ROHF: scf_reader,
-    params.METHOD.UHF: scf_reader,
     params.METHOD.RHF_MP2: mp2_reader,
     params.METHOD.RHF_CCSD: ccsd_reader,
     params.METHOD.RHF_CCSD_T: ccsd_t_reader,
+    params.METHOD.UHF: scf_reader,
+    params.METHOD.ROHF: scf_reader,
 }
-# def general_e_reader(output_string):
-#     """ Retrieves any energy: the initial, middle, and final
-#         Returns as a float. Units of Hartrees.
-#     """
-#
-#     general_e_pattern = (
-#         'FINAL SINGLE POINT ENERGY' +
-#         rep.one_or_more(relib.WHITESPACE) +
-#         rep.capturing(relib.FLOAT)
-#
-#     )
-#
-#     return general_energy

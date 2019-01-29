@@ -1,0 +1,41 @@
+# Psi4 1.0 Computation 
+
+molecule {
+ 0 1
+ H
+ O 1 r1
+ C 2 r2 1 a1
+ H 3 r3 2 a2 1 d1
+ H 3 r4 4 a3 2 d2
+ H 3 r4 4 a3 2 d3
+ r1 =   0.992
+ r2 =   1.398
+ r3 =   1.109
+ r4 =   1.112
+ a1 =   106.0
+ a2 =   108.9
+ a3 =   108.2
+ d2 =   119.9
+ d3 =  -119.9
+ d1 =  -180.0
+ units angstrom
+}
+
+set reference rks
+set scf_type pk
+set basis cc-pVDZ 
+set opt_type min
+
+set optking {
+  frozen_dihedral = ("
+    6 3 4 2
+  ")
+}
+
+opt('b3lyp')
+G, wfn1 = gradient('b3lyp', return_wfn=True)
+E, wfn2 = frequencies('b3lyp', dertype=1, return_wfn=True)
+wfn1.gradient().print_out()
+wfn2.hessian().print_out()
+
+

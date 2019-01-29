@@ -36,7 +36,7 @@ def rhf_uhf_reader(output_string):
     )
 
     # Obtain the RHF or UHF energy
-    rhf_energy = repar.pattern_parser_single_float(rhf_uhf_pattern, output_string)
+    rhf_energy = repar.energy_pattern_parser(rhf_uhf_pattern, output_string)
 
     return rhf_energy
 
@@ -58,7 +58,7 @@ def rohf_reader(output_string):
     )
 
     # Obtain the ROHF energy
-    rohf_energy = repar.pattern_parser_single_float(rohf_pattern, output_string)
+    rohf_energy = repar.energy_pattern_parser(rohf_pattern, output_string)
 
     return rohf_energy
 
@@ -75,7 +75,7 @@ def mp2_reader(output_string):
     )
 
     # Obtain the MP2 energy
-    mp2_energy = repar.pattern_parser_single_float(mp2_pattern, output_string)
+    mp2_energy = repar.energy_pattern_parser(mp2_pattern, output_string)
 
     return mp2_energy
 
@@ -92,7 +92,7 @@ def ccsd_reader(output_string):
     )
 
     # Obtain the CCSD energy
-    ccsd_energy = repar.pattern_parser_single_float(ccsd_pattern, output_string)
+    ccsd_energy = repar.energy_pattern_parser(ccsd_pattern, output_string)
 
     return ccsd_energy
 
@@ -109,7 +109,7 @@ def ccsd_t_reader(output_string):
     )
 
     # Obtain the CCSD(T) energy
-    ccsd_t_energy = repar.pattern_parser_single_float(ccsd_t_pattern, output_string)
+    ccsd_t_energy = repar.energy_pattern_parser(ccsd_t_pattern, output_string)
 
     return ccsd_t_energy
 
@@ -118,15 +118,15 @@ def ccsd_t_reader(output_string):
 
 ENERGY_READERS = {
     params.METHOD.RHF: rhf_uhf_reader,
-    params.METHOD.UHF: rhf_uhf_reader,
-    params.METHOD.ROHF: rohf_reader,
     params.METHOD.RHF_MP2: mp2_reader,
-    params.METHOD.UHF_MP2: mp2_reader,
-    params.METHOD.ROHF_MP2: mp2_reader,
     params.METHOD.RHF_CCSD: ccsd_reader,
-    params.METHOD.UHF_CCSD: ccsd_reader,
-    params.METHOD.ROHF_CCSD: ccsd_reader,
     params.METHOD.RHF_CCSD_T: ccsd_t_reader,
+    params.METHOD.UHF: rhf_uhf_reader,
+    params.METHOD.UHF_MP2: mp2_reader,
+    params.METHOD.UHF_CCSD: ccsd_reader,
     params.METHOD.UHF_CCSD_T: ccsd_t_reader,
+    params.METHOD.ROHF: rohf_reader,
+    params.METHOD.ROHF_MP2: mp2_reader,
+    params.METHOD.ROHF_CCSD: ccsd_reader,
     params.METHOD.ROHF_CCSD_T: ccsd_t_reader
 }

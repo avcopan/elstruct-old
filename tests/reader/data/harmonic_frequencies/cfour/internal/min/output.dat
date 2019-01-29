@@ -1,0 +1,4 @@
+ --invoking executable--
+/lcrc/project/PACC/brossdh/cfour_blues/bin/xinitenv
+sh: mpirun: command not found
+--executable xinitenv finished with status 32512 in        0.01 seconds (walltime).

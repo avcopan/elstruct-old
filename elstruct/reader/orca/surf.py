@@ -5,27 +5,39 @@ from a Orca 4.0 output file.
 
 __authors__ = "Kevin Moore, Andreas Copan"
 __updated__ = "2019-01-18"
-#
-# from ..rere import parse as repar
-# from ..rere import find as ref
-# from ..rere import pattern as rep
-# from ..rere import pattern_lib as relib
-# from ... import params
-#
-#
-# ##### Series of functions to read the frequency information #####
-#
-# # think its XYZ? hessian is in .hess (maybe print opts put it in output file)
-# HESS_XYZ_BEGIN = '$hessian'
-# HESS_XYZ_END = '$vibrational_frequencies'
-# # internla coord grad in output file (in some units
-# GRAD_INT_BEGIN = ( 'Definition' +
-#                    rep.one_or_more(relib.WHITESPACE) +
-#                    'Value    dE/dq     Step     New-Value' +
-#                  )
-# GRAD_INT_END = '*********************'
-#
-# # Dictionary of functions to read frequency information in the files
-#
-# SURFACE_READERS = {
-# }
+
+from ..rere import parse as repar
+from ..rere import pattern as rep
+from ..rere import pattern_lib as relib
+
+
+# Series of functions to read the frequency information
+
+def cartesian_hessian_reader(output_string):
+    """ gets the xyz hessian
+    """
+
+    # Patterns to identify text block where Hessian is located
+    cart_hess_block_begin_pattern = '$hessian'
+    cart_hess_block_end_pattern = '$vibrational_frequencies'
+
+    # Obtain text block of containing the Hessian
+    cart_hess_block = repar.block(cart_hess_block_begin_pattern,
+                                  cart_hess_block_end_pattern,
+                                  output_string)
+
+    # Hessian Line Pattern: AXN  FLOAT  FLOAT  ...  NEWLINE
+    cart_hess_pattern = (
+        rep.capturing(
+            relib.INTEGER +
+            rep.one_or_more(
+                rep.one_or_more(relib.WHITESPACE) +
+                rep.one_or_more(relib.EXPONENTIAL_FLOAT)
+            )
+        )
+    )
+
+    # Retrieve the Hessian
+    cart_hess = repar.hessian_pattern_parser(cart_hess_pattern, cart_hess_block)
+
+    return cart_hess

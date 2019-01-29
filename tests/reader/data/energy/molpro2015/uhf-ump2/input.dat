@@ -1,0 +1,14 @@
+angstrom
+Geometry = {
+ O       0.000000    0.000000    0.000000
+ O       0.000000    0.000000    1.311565
+ H       0.943625    0.000000    1.573176
+}
+
+set,charge=0
+set,spin=1
+
+basis=cc-pVDZ
+
+{uhf}
+{ump2}

@@ -1,0 +1,6 @@
+[file orca_main/mainchk.cpp, line 1857]: Error (ORCA_MAIN): ... aborting the run
+
+cp: cannot stat `/scratch/kmoore/ORCASCR_1548617095410785492/*.xyz': No such file or directory
+cp: cannot stat `/scratch/kmoore/ORCASCR_1548617095410785492/*.gbw': No such file or directory
+cp: cannot stat `/scratch/kmoore/ORCASCR_1548617095410785492/*.hess': No such file or directory
+cp: cannot stat `/scratch/kmoore/ORCASCR_1548617095410785492/*.pot': No such file or directory

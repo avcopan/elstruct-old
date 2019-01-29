@@ -1,0 +1,18 @@
+# Psi4 1.0 Computation 
+
+molecule {
+ 0 1
+ O      0.000000    0.000000    0.000000
+ C      0.000000    0.000000    1.201402
+ H      0.937573    0.000000    1.789196
+ H     -0.937573   -0.000000    1.789196
+ units angstrom
+}
+
+set reference rohf
+set scf_type pk
+set basis cc-pVDZ 
+set freeze_core True
+
+energy('scf')
+

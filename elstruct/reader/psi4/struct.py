@@ -10,27 +10,26 @@ __updated__ = "2019-01-18"
 from ..rere import parse as repar
 from ..rere import pattern as rep
 from ..rere import pattern_lib as relib
-from ... import params
 
 
 # Series of functions to read structural information
 
-def opt_geom_xyz_reader(output_string):
+def optimized_cartesian_geometry_reader(output_string):
     """ Retrieves the optimized geometry in Cartesian xyz coordinates.
         Units of Angstrom.
     """
 
-    # Pattern to idetify text block where optimized geometry is located
-    opt_geom_xyz_begin_pattern = 'Final (previous) structure:'
-    opt_geom_xyz_end_pattern = 'Saving final (previous) structure'
+    # Pattern to identify text block where geometry is located
+    cart_geom_begin_pattern = 'Final (previous) structure:'
+    cart_geom_end_pattern = 'Saving final (previous) structure'
 
-    # Obtain text block containing the optimized geometry in xyz coordinates
-    opt_geom_xyz_block = repar.block(opt_geom_xyz_begin_pattern,
-                                     opt_geom_xyz_end_pattern,
-                                     output_string)
+    # Obtain text block containing the geometry
+    cart_geom_block = repar.block(cart_geom_begin_pattern,
+                                  cart_geom_end_pattern,
+                                  output_string)
 
     # Pattern for the xyz coordinate of each atom
-    opt_geom_xyz_pattern = (
+    cart_geom_pattern = (
         rep.capturing(relib.UPPERCASE_LETTER) +
         rep.one_or_more(relib.WHITESPACE) +
         rep.capturing(relib.FLOAT) +
@@ -40,8 +39,8 @@ def opt_geom_xyz_reader(output_string):
         rep.capturing(relib.FLOAT)
     )
 
-    cart_geom = repar.pattern_parser_cartesian_geometry(
-        opt_geom_xyz_pattern, opt_geom_xyz_block)
+    cart_geom = repar.cartesian_geometry_pattern_parser(
+        cart_geom_pattern, cart_geom_block)
 
     return cart_geom
 
@@ -120,12 +119,3 @@ def equil_rot_constant_reader(output_string):
     equil_rot_const = [const for const in all_rot_consts if const != 0.0]
 
     return equil_rot_const
-
-
-# Dictionary for strings to find the geometries in the files
-
-STRUCTURE_READERS = {
-    params.STRUCTURE.OPT_GEOM_XYZ: opt_geom_xyz_reader,
-    # params.STRUCTURE.OPT_GEOM_INT: opt_geom_internal_reader,
-    params.STRUCTURE.EQUIL_ROT_CONST: equil_rot_constant_reader,
-}

@@ -8,28 +8,29 @@ __updated__ = "2019-01-11"
 class METHOD():
     """ Ab initio electronic structure methods
     """
-    # Hartree-Fock methods
+    # RHF Methods
     RHF = 'rhf'
-    UHF = 'uhf'
-    ROHF = 'rohf'
-    # Single-reference correlated methods
     RHF_MP2 = 'rhf-mp2'
-    UHF_MP2 = 'uhf-mp2'
-    ROHF_MP2 = 'rohf-mp2'
-    UHF_UMP2 = 'uhf-ump2'
-    ROHF_RMP2 = 'rohf-rmp2'
     RHF_CCSD = 'rhf-ccsd'
+    RHF_CCSD_T = 'rhf-ccsd_t'
+    RHF_CCSDT = 'rhf-ccsdt'
+    RHF_CCSDT_Q = 'rhf-ccsdt_q'
+    # UHF Methods
+    UHF = 'uhf'
+    UHF_MP2 = 'uhf-mp2'
+    UHF_UMP2 = 'uhf-ump2'
     UHF_CCSD = 'uhf-ccsd'
+    UHF_CCSD_T = 'uhf-ccsd_t'
+    # ROHF Methods
+    ROHF = 'rohf'
+    ROHF_MP2 = 'rohf-mp2'
+    ROHF_RMP2 = 'rohf-rmp2'
     ROHF_CCSD = 'rohf-ccsd'
     ROHF_UCCSD = 'rohf-uccsd'
     ROHF_RCCSD = 'rohf-rccsd'
-    RHF_CCSD_T = 'rhf-ccsd(t)'
-    UHF_CCSD_T = 'uhf-ccsd(t)'
-    ROHF_CCSD_T = 'rohf-ccsd(t)'
-    ROHF_UCCSD_T = 'rohf-uccsd(t)'
-    ROHF_RCCSD_T = 'rohf-rccsd(t)'
-    RHF_CCSDT = 'rhf-ccsdt'
-    RHF_CCSDT_Q = 'rhf-ccsdt(q)'
+    ROHF_CCSD_T = 'rohf-ccsd_t'
+    ROHF_UCCSD_T = 'rohf-uccsd_t'
+    ROHF_RCCSD_T = 'rohf-rccsd_t'
     # DFT
     DFT = 'dft'
     # Custom, user-defined method

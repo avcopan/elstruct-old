@@ -1,0 +1,32 @@
+memory,850,m
+gthresh,energy=1.0d-10,orbital=1.0d-10,oneint=1.d-12,twoint=1.d-14
+
+nosym
+angstrom
+Geometry = {
+H
+O 1 r1
+C 2 r2 1 a1
+H 3 r3 2 a2 1 d1
+H 3 r4 4 a3 2 d2
+H 3 r4 4 a3 2 -d2
+}
+
+r1 =   0.992
+r2 =   1.398
+r3 =   1.109
+r4 =   1.112
+a1 =   106.0
+a2 =   108.9
+a3 =   108.2
+d2 =   119.9
+d1 =     0.0
+
+basis=cc-pVDZ
+{rks,b3lyp3,maxit=300}
+
+{optg,root=2}
+
+{freq
+ print,hessian}
+

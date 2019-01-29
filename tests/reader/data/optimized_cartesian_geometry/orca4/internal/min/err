@@ -1,0 +1,11 @@
+[file orca_main/maininp1.cpp, line 3283]: 
+cp: cannot stat `/scratch/kmoore/ORCASCR_1548718895235445543/*.xyz': No such file or directory
+cp: cannot stat `/scratch/kmoore/ORCASCR_1548718895235445543/*.gbw': No such file or directory
+cp: cannot stat `/scratch/kmoore/ORCASCR_1548718895235445543/*.hess': No such file or directory
+cp: cannot stat `/scratch/kmoore/ORCASCR_1548718895235445543/*.pot': No such file or directory
+[file orca_main/maininp1.cpp, line 3283]: 
+cp: cannot stat `/scratch/kmoore/ORCASCR_1548718964484904074/*.xyz': No such file or directory
+cp: cannot stat `/scratch/kmoore/ORCASCR_1548718964484904074/*.gbw': No such file or directory
+cp: cannot stat `/scratch/kmoore/ORCASCR_1548718964484904074/*.hess': No such file or directory
+cp: cannot stat `/scratch/kmoore/ORCASCR_1548718964484904074/*.pot': No such file or directory
+cp: cannot stat `/scratch/kmoore/ORCASCR_1548719067850837022/*.pot': No such file or directory

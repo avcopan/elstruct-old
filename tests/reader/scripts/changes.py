@@ -12,7 +12,7 @@ NEW_LINES_CFOUR = {
     'rhf': [
         ['CALC=MP2\n', 'rhf-mp2'],
         ['CALC=CCSD\nCC_PROG=ECC\nABCDTYPE=AOBASIS\n', 'rhf-ccsd'],
-        ['CALC=CCSD(T)\nCC_PROG=ECC\nABCDTYPE=AOBASIS\n', '"rhf-ccsd(t)"'],
+        ['CALC=CCSD(T)\nCC_PROG=ECC\nABCDTYPE=AOBASIS\n', '"rhf-ccsd_t"'],
         ['CALC=CCSDT\nCC_PROG=NCC\nABCDTYPE=AOBASIS\n', 'rhf-ccsdt'],
         ['CALC=CCSDT(Q)\nCC_PROG=NCC\nABCDTYPE=AOBASIS\n', 'rhf-ccsdt_q']
     ],
@@ -30,25 +30,29 @@ NEW_LINES_CFOUR = {
 
 # GAUSSIAN
 OLD_LINES_GAUSSIAN = {
-    'rhf': ['# RHF HF/6-31G*', 'rhf'],
-    'uhf': ['# UHF HF/6-31G*', 'uhf'],
-    'rohf': ['# ROHF HF/6-31G*', 'rohf']
+    'rhf': ['# RHF/cc-pVDZ', 'rhf'],
+    'uhf': ['# UHF/cc-pVDZ', 'uhf'],
+    'rohf': ['# ROHF/cc-pVDZ', 'rohf']
 }
 NEW_LINES_GAUSSIAN = {
     'rhf': [
-        ['# RHF MP2/6-31G*\n', 'rhf-mp2'],
-        ['# RHF CCSD/6-31G*\n', 'rhf-ccsd'],
-        ['# RHF CCSD(T)/6-31G*\n', 'rhf-ccsd_t']
+        ['# RHF MP2/cc-pVDZ\n', 'rhf-mp2'],
+        ['# RHF CCSD/cc-pVDZ\n', 'rhf-ccsd'],
+        ['# RHF CCSD(T)/cc-pVDZ\n', 'rhf-ccsd_t'],
+        ['# B2PLYPD3/cc-pVDZ\n', 'b2plypd3'],
+        ['# B3LYP/cc-pVDZ\n', 'b3lyp'],
+        ['# M062X/cc-pVDZ\n', 'm062x'],
+        ['# wB97X-D/cc-pVDZ\n', 'wb97xd']
     ],
     'uhf': [
-        ['# UHF MP2/6-31G*\n', 'uhf-mp2'],
-        ['# UHF CCSD/6-31G*\n', 'uhf-ccsd'],
-        ['# UHF CCSD(T)/6-31G*\n', 'uhf-ccsd_t'],
+        ['# UHF MP2/cc-pVDZ\n', 'uhf-mp2'],
+        ['# UHF CCSD/cc-pVDZ\n', 'uhf-ccsd'],
+        ['# UHF CCSD(T)/cc-pVDZ\n', 'uhf-ccsd_t'],
     ],
     'rohf': [
-        ['# ROHF MP2/6-31G*\n', 'rohf-mp2'],
-        ['# ROHF CCSD/6-31G*\n', 'rohf-ccsd'],
-        ['# ROHF CCSD(T)/6-31G*\n', 'rohf-ccsd_t'],
+        ['# ROHF MP2/cc-pVDZ\n', 'rohf-mp2'],
+        ['# ROHF CCSD/cc-pVDZ\n', 'rohf-ccsd'],
+        ['# ROHF CCSD(T)/cc-pVDZ\n', 'rohf-ccsd_t'],
     ]
 }
 
@@ -117,23 +121,26 @@ NEW_LINES_ORCA = {
     'rhf': [
         ['! RHF MP2\n', 'rhf-mp2'],
         ['! RHF CCSD\n', 'rhf-ccsd'],
-        ['! RHF CCSD(T)\n', 'rhf-ccsd(t)']
+        ['! RHF CCSD(T)\n', 'rhf-ccsd_t']
     ],
     'uhf': [
         ['! UHF MP2\n', 'uhf-mp2'],
         ['! UHF CCSD\n', 'uhf-ccsd'],
-        ['! UHF CCSD(T)\n', 'uhf-ccsd(t)']
+        ['! UHF CCSD(T)\n', 'uhf-ccsd_t']
     ],
     'rohf': [
         ['! ROHF MP2\n', 'rohf-mp2'],
         ['! ROHF CCSD\n', 'rohf-ccsd'],
-        ['! ROHF CCSD(T)\n', 'rohf-ccsd(t)']
+        ['! ROHF CCSD(T)\n', 'rohf-ccsd_t']
     ]
 }
 
 
 # PSI4
 OLD_LINES_PSI4 = {
+    'rhf':  ["energy('scf')", 'rhf'],
+    'uhf':  ["energy('scf')", 'uhf'],
+    'rohf': ["energy('scf')", 'rohf']
 }
 NEW_LINES_PSI4 = {
 }

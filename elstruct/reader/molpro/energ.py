@@ -38,7 +38,7 @@ def rhf_reader(output_string):
     )
 
     # Obtain the RHF energy
-    rhf_energy = repar.pattern_parser_single_float(rhf_pattern, output_string)
+    rhf_energy = repar.energy_pattern_parser(rhf_pattern, output_string)
 
     return rhf_energy
 
@@ -60,7 +60,7 @@ def uhf_reader(output_string):
     )
 
     # Obtain the UHF energy
-    uhf_energy = repar.pattern_parser_single_float(uhf_pattern, output_string)
+    uhf_energy = repar.energy_pattern_parser(uhf_pattern, output_string)
 
     return uhf_energy
 
@@ -89,11 +89,11 @@ def rhf_mp2_reader(output_string):
     )
 
     # Obtain the RHF-MP2 or RHF-UMP2 energy
-    mp2_energy = repar.pattern_parser_single_float(mp2_pattern1, output_string)
+    mp2_energy = repar.energy_pattern_parser(mp2_pattern1, output_string)
     if mp2_energy is None:
-        mp2_energy = repar.pattern_parser_single_float(mp2_pattern2, output_string)
+        mp2_energy = repar.energy_pattern_parser(mp2_pattern2, output_string)
         if mp2_energy is None:
-            mp2_energy = repar.pattern_parser_single_float(ump2_pattern, output_string)
+            mp2_energy = repar.energy_pattern_parser(ump2_pattern, output_string)
 
     return mp2_energy
 
@@ -114,7 +114,7 @@ def uhf_ump2_reader(output_string):
     )
 
     # Obtain the UHF-MP2 energy
-    ump2_energy = repar.pattern_parser_single_float(ump2_pattern, output_string)
+    ump2_energy = repar.energy_pattern_parser(ump2_pattern, output_string)
 
     return ump2_energy
 
@@ -143,9 +143,9 @@ def rohf_rmp2_reader(output_string):
     )
 
     # Obtain the ROHF-RMP2 energy
-    rmp2_energy = repar.pattern_parser_single_float(rmp2_pattern1, output_string)
+    rmp2_energy = repar.energy_pattern_parser(rmp2_pattern1, output_string)
     if rmp2_energy is None:
-        rmp2_energy = repar.pattern_parser_single_float(rmp2_pattern2, output_string)
+        rmp2_energy = repar.energy_pattern_parser(rmp2_pattern2, output_string)
 
     return rmp2_energy
 
@@ -174,11 +174,11 @@ def rhf_rohf_ccsd_uccsd_reader(output_string):
     )
 
     # Obtain the RHF-CCSD, RHF-UCCSD, ROHF-UCCSD energy
-    ccsd_energy = repar.pattern_parser_single_float(ccsd_pattern1, output_string)
+    ccsd_energy = repar.energy_pattern_parser(ccsd_pattern1, output_string)
     if ccsd_energy is None:
-        ccsd_energy = repar.pattern_parser_single_float(ccsd_pattern2, output_string)
+        ccsd_energy = repar.energy_pattern_parser(ccsd_pattern2, output_string)
         if ccsd_energy is None:
-            ccsd_energy = repar.pattern_parser_single_float(uccsd_pattern, output_string)
+            ccsd_energy = repar.energy_pattern_parser(uccsd_pattern, output_string)
 
     return ccsd_energy
 
@@ -201,9 +201,9 @@ def rohf_rccsd_reader(output_string):
     )
 
     # Obtain the ROHF-RCCSD energy
-    ccsd_energy = repar.pattern_parser_single_float(ccsd_pattern, output_string)
+    ccsd_energy = repar.energy_pattern_parser(ccsd_pattern, output_string)
     if ccsd_energy is None:
-        ccsd_energy = repar.pattern_parser_single_float(rccsd_pattern, output_string)
+        ccsd_energy = repar.energy_pattern_parser(rccsd_pattern, output_string)
 
     return ccsd_energy
 
@@ -226,9 +226,9 @@ def rhf_rohf_ccsd_t_uccsd_t_reader(output_string):
     )
 
     # Obtain the RHF-CCSD(T), RHF-UCCSD(T), or ROHF-UCCSD(T) energy
-    ccsd_t_energy = repar.pattern_parser_single_float(ccsd_t_pattern, output_string)
+    ccsd_t_energy = repar.energy_pattern_parser(ccsd_t_pattern, output_string)
     if ccsd_t_energy is None:
-        ccsd_t_energy = repar.pattern_parser_single_float(uccsd_t_pattern, output_string)
+        ccsd_t_energy = repar.energy_pattern_parser(uccsd_t_pattern, output_string)
 
     return ccsd_t_energy
 
@@ -251,9 +251,9 @@ def rohf_rccsd_t_reader(output_string):
     )
 
     # Obtain the ROHF-RCCSD(T) energy
-    ccsd_t_energy = repar.pattern_parser_single_float(ccsd_t_pattern, output_string)
+    ccsd_t_energy = repar.energy_pattern_parser(ccsd_t_pattern, output_string)
     if ccsd_t_energy is None:
-        ccsd_t_energy = repar.pattern_parser_single_float(rccsd_t_pattern, output_string)
+        ccsd_t_energy = repar.energy_pattern_parser(rccsd_t_pattern, output_string)
 
     return ccsd_t_energy
 
@@ -273,7 +273,7 @@ def custom_e_reader(output_string):
     )
 
     # Obtain the custom energy
-    custom_energy = repar.pattern_parser_single_float(custom_e_pattern, output_string)
+    custom_energy = repar.energy_pattern_parser(custom_e_pattern, output_string)
 
     return custom_energy
 
@@ -282,15 +282,15 @@ def custom_e_reader(output_string):
 
 ENERGY_READERS = {
     params.METHOD.RHF: rhf_reader,
-    params.METHOD.ROHF: rhf_reader,
-    params.METHOD.UHF: uhf_reader,
     params.METHOD.RHF_MP2: rhf_mp2_reader,
-    params.METHOD.UHF_UMP2: uhf_ump2_reader,
-    params.METHOD.ROHF_RMP2: rohf_rmp2_reader,
     params.METHOD.RHF_CCSD: rhf_rohf_ccsd_uccsd_reader,
+    params.METHOD.RHF_CCSD_T: rhf_rohf_ccsd_t_uccsd_t_reader,
+    params.METHOD.UHF: uhf_reader,
+    params.METHOD.UHF_UMP2: uhf_ump2_reader,
+    params.METHOD.ROHF: rhf_reader,
+    params.METHOD.ROHF_RMP2: rohf_rmp2_reader,
     params.METHOD.ROHF_UCCSD: rhf_rohf_ccsd_uccsd_reader,
     params.METHOD.ROHF_RCCSD: rohf_rccsd_reader,
-    params.METHOD.RHF_CCSD_T: rhf_rohf_ccsd_t_uccsd_t_reader,
     params.METHOD.ROHF_UCCSD_T: rhf_rohf_ccsd_t_uccsd_t_reader,
     params.METHOD.ROHF_RCCSD_T: rohf_rccsd_t_reader,
     # params.METHOD.CUSTOM: custom_e_reader,

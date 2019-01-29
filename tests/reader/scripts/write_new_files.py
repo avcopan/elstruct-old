@@ -6,14 +6,14 @@ __authors__ = "Kevin Moore"
 __updated__ = "2019-01-20"
 
 import os
-from changes import OLD_LINES_ORCA
-from changes import NEW_LINES_ORCA
+from changes import OLD_LINES_PSI4
+from changes import NEW_LINES_PSI4
 
 
 # Reset dicts cuz I am lazy
-OLD_LINES = OLD_LINES_ORCA
-NEW_LINES = NEW_LINES_ORCA
-PROGRAM = 'orca'
+OLD_LINES = OLD_LINES_PSI4
+NEW_LINES = NEW_LINES_PSI4
+PROGRAM = 'psi4'
 OVERWRITE = False
 
 # Get path

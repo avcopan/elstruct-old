@@ -18,31 +18,31 @@ from ..rere import pattern_lib as relib
 
 # Series of functions to read the frequency information
 
-def harm_vib_freqs_reader(output_string):
+def harmonic_frequencies_reader(output_string):
     """ Reads the harmonic vibrational frequencies from the output file.
         Returns the frequencies as a list of floats in cm-1.
     """
 
-    harm_vib_begin_pattern = 'VIBRATIONAL FREQUENCIES'
-    harm_vib_end_pattern = 'NORMAL MODES'
+    # Patterns to identify text block where the frequencies are located
+    harm_freqs_begin_pattern = 'VIBRATIONAL FREQUENCIES'
+    harm_freqs_end_pattern = 'NORMAL MODES'
 
-    harm_vib_block = repar.block(harm_vib_begin_pattern,
-                                 harm_vib_end_pattern,
-                                 output_string)
+    # Obtain text block containing the frequencies
+    harm_freqs_block = repar.block(harm_freqs_begin_pattern,
+                                   harm_freqs_end_pattern,
+                                   output_string)
 
-    harm_vib_freq_pattern = (
+    # Frequency Line Pattern: INT:  FLOAT  cm**-1
+    harm_freqs_pattern = (
         rep.one_or_more(relib.INTEGER) +
         ':' +
         rep.one_or_more(relib.WHITESPACE) +
-        rep.capturing(relib.FLOAT + rep.maybe('i')) +
+        rep.capturing(relib.FLOAT) +
         relib.WHITESPACE +
-        'cm**-1'
+        rep.escape('cm**-1')
     )
 
     # Obtain the frequencies for all degrees-of-freedom
-    all_freqs = repar.pattern_parser_list_mult_str(harm_vib_freq_pattern, harm_vib_block)
+    harm_freqs = repar.harmonic_frequencies_pattern_parser_2(harm_freqs_pattern, harm_freqs_block)
 
-    # Remove the zero frequencies
-    vib_freqs = tuple((freq for freq in all_freqs if freq != 0.0))
-
-    return vib_freqs
+    return harm_freqs

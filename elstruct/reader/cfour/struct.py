@@ -17,32 +17,31 @@ __updated__ = "2019-01-18"
 from ..rere import parse as repar
 from ..rere import pattern as rep
 from ..rere import pattern_lib as relib
-from ... import params
 from ... import phys_constants
 
 
 # Series of functions to read structural information
 
-def all_geom_xyz_reader(output_string):
+def optimized_cartesian_geometry_reader(output_string):
     """ Retrieves all geometries but last in Cartesian xyz coordinates.
         Units of Angstrom and degrees.
     """
 
-    # Pattern to idetify text block where optimized geometry is located
-    m1_geom_xyz_begin_pattern = (
+    # Pattern to idetify text block where geometry is located
+    cart_geom_begin_pattern = (
         'Z-matrix   Atomic' +
         rep.one_or_more(relib.WHITESPACE) +
         'Coordinates (in bohr)'
     )
-    m1_geom_xyz_end_pattern = 'Interatomic distance matrix (Angstroms)'
+    cart_geom_end_pattern = 'Interatomic distance matrix (Angstroms)'
 
-    # Obtain text block of containing the optimized geometry in xyz coordinates
-    m1_geom_block = repar.block(m1_geom_xyz_begin_pattern,
-                                m1_geom_xyz_end_pattern,
-                                output_string)
+    # Obtain text block of containing the geometry
+    cart_geom_block = repar.block(cart_geom_begin_pattern,
+                                  cart_geom_end_pattern,
+                                  output_string)
 
-    # Pattern for the xyz coordinate of each atom
-    m1_geom_xyz_pattern = (
+    # Geometry Line Pattern: CHARS  INTEGER  FLOAT  FLOAT  FLOAT  NEWLINE
+    cart_geom_pattern = (
         rep.capturing(relib.ANY_CHAR) +
         rep.one_or_more(relib.WHITESPACE) +
         rep.one_or_more(relib.INTEGER) +
@@ -54,9 +53,9 @@ def all_geom_xyz_reader(output_string):
         rep.capturing(relib.FLOAT)
     )
 
-    # Obtain the xyz coordinates from the block
+    # Retrieve the geometry; currently in Bohrs 
     cart_geom_bohr = repar.pattern_parser_cartesian_geometry(
-        m1_geom_xyz_pattern, m1_geom_block)
+        cart_geom_pattern, cart_geom_block)
 
     # Convert from Bohrs to Angstroms
     cart_geom = tuple((sym, (x * phys_constants.BOHR_TO_ANG,
@@ -68,7 +67,7 @@ def all_geom_xyz_reader(output_string):
     return cart_geom
 
 
-def opt_geom_internal_reader(output_string):
+def optimized_internal_geometry_reader(output_string):
     """ Retrieves the optimized geometry in internal coordinates.
         Units of Angstrom and degrees.
     """
@@ -130,12 +129,3 @@ def equil_rot_constant_reader(output_string):
                              for const in rot_const_ghz))
 
     return equil_rot_const
-
-
-# Dictionary for strings to find the geometries in the files
-
-STRUCTURE_READERS = {
-    params.STRUCTURE.OPT_GEOM_XYZ: all_geom_xyz_reader,
-    params.STRUCTURE.OPT_GEOM_INT: opt_geom_internal_reader,
-    params.STRUCTURE.EQUIL_ROT_CONST: equil_rot_constant_reader,
-}
