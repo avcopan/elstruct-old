@@ -9,7 +9,7 @@ Frequencies currently supported:
 """
 
 __authors__ = "Kevin Moore, Andreas Copan"
-__updated__ = "2019-01-18"
+__updated__ = "2019-01-30"
 
 from ..rere import parse as repar
 from ..rere import pattern as rep
@@ -37,25 +37,33 @@ def harmonic_frequencies_reader(output_string):
     )
 
     # Obtain the frequencies for all degrees-of-freedom
-    harm_freqs = repar.harmonic_frequencies_pattern_parser(harm_vib_freq_pattern, output_string)
+    harm_freqs = repar.harmonic_frequencies_pattern_parser(
+        harm_vib_freq_pattern, output_string)
 
     # Obtain the imaginary frequencies
-    imag_freq_block_begin_pattern = 'Imaginary Vibration' # + rep.one_or_more(relib.WHITESPACE) + 'Wavenumber'
-    imag_freq_block_end_pattern = 'Low Vibration' # + rep.one_or_more(relib.WHITESPACE) + 'Wavenumber'
-    imag_freq_block = repar.block(
-        imag_freq_block_begin_pattern,
-        imag_freq_block_end_pattern,
+    im_freq_block_begin_pattern = 'Imaginary Vibration'
+    # + rep.one_or_more(relib.WHITESPACE) + 'Wavenumber'
+    im_freq_block_end_pattern = 'Low Vibration'
+    # + rep.one_or_more(relib.WHITESPACE) + 'Wavenumber'
+    im_freq_block = repar.block(
+        im_freq_block_begin_pattern,
+        im_freq_block_end_pattern,
         output_string)
 
     # Check if the imaginary frequency block exists, if so read freqs
-    if imag_freq_block is not None:
-        imag_freq_pattern = relib.INTEGER + rep.one_or_more(relib.WHITESPACE) + rep.capturing(relib.FLOAT)
-        imag_freqs = repar.harmonic_frequencies_pattern_parser(imag_freq_pattern, imag_freq_block)
+    if im_freq_block is not None:
+        im_freq_pattern = (
+            relib.INTEGER +
+            rep.one_or_more(relib.WHITESPACE) +
+            rep.capturing(relib.FLOAT)
+        )
+        im_freqs = repar.harmonic_frequencies_pattern_parser(
+            im_freq_pattern, im_freq_block)
 
         # Relabel frequency if it is imaginary
         harm_freqs_final = []
         for freq in harm_freqs:
-            if freq in imag_freqs:
+            if freq in im_freqs:
                 freq = -1.0 * freq
                 harm_freqs_final.insert(0, freq)
             else:

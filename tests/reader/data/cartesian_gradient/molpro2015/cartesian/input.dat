@@ -1,0 +1,18 @@
+memory,850,m
+gthresh,energy=1.0d-10,orbital=1.0d-10,oneint=1.d-12,twoint=1.d-14
+
+nosym
+angstrom
+Geometry = {
+H        0.000000    0.000000    0.000000
+O        0.000000    0.000000    0.992000
+C        1.343844    0.000000    1.377341
+H        1.399951   -0.000000    2.484921
+H        1.852185    0.915763    1.003828
+H        1.852185   -0.915763    1.003828
+}
+
+basis=cc-pVDZ
+{rks,b3lyp3,maxit=300}
+
+FORCE

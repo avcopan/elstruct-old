@@ -11,7 +11,7 @@ Energies currently supported:
 """
 
 __authors__ = "Kevin Moore, Andreas Copan"
-__updated__ = "2019-01-18"
+__updated__ = "2019-01-30"
 
 from ..rere import parse as repar
 from ..rere import pattern as rep
@@ -89,11 +89,14 @@ def rhf_mp2_reader(output_string):
     )
 
     # Obtain the RHF-MP2 or RHF-UMP2 energy
-    mp2_energy = repar.energy_pattern_parser(mp2_pattern1, output_string)
+    mp2_energy = repar.energy_pattern_parser(mp2_pattern1,
+                                             output_string)
     if mp2_energy is None:
-        mp2_energy = repar.energy_pattern_parser(mp2_pattern2, output_string)
+        mp2_energy = repar.energy_pattern_parser(mp2_pattern2,
+                                                 output_string)
         if mp2_energy is None:
-            mp2_energy = repar.energy_pattern_parser(ump2_pattern, output_string)
+            mp2_energy = repar.energy_pattern_parser(ump2_pattern,
+                                                     output_string)
 
     return mp2_energy
 
@@ -174,11 +177,14 @@ def rhf_rohf_ccsd_uccsd_reader(output_string):
     )
 
     # Obtain the RHF-CCSD, RHF-UCCSD, ROHF-UCCSD energy
-    ccsd_energy = repar.energy_pattern_parser(ccsd_pattern1, output_string)
+    ccsd_energy = repar.energy_pattern_parser(ccsd_pattern1,
+                                              output_string)
     if ccsd_energy is None:
-        ccsd_energy = repar.energy_pattern_parser(ccsd_pattern2, output_string)
+        ccsd_energy = repar.energy_pattern_parser(ccsd_pattern2,
+                                                  output_string)
         if ccsd_energy is None:
-            ccsd_energy = repar.energy_pattern_parser(uccsd_pattern, output_string)
+            ccsd_energy = repar.energy_pattern_parser(uccsd_pattern,
+                                                      output_string)
 
     return ccsd_energy
 
@@ -226,9 +232,11 @@ def rhf_rohf_ccsd_t_uccsd_t_reader(output_string):
     )
 
     # Obtain the RHF-CCSD(T), RHF-UCCSD(T), or ROHF-UCCSD(T) energy
-    ccsd_t_energy = repar.energy_pattern_parser(ccsd_t_pattern, output_string)
+    ccsd_t_energy = repar.energy_pattern_parser(ccsd_t_pattern,
+                                                output_string)
     if ccsd_t_energy is None:
-        ccsd_t_energy = repar.energy_pattern_parser(uccsd_t_pattern, output_string)
+        ccsd_t_energy = repar.energy_pattern_parser(uccsd_t_pattern,
+                                                    output_string)
 
     return ccsd_t_energy
 
@@ -251,9 +259,11 @@ def rohf_rccsd_t_reader(output_string):
     )
 
     # Obtain the ROHF-RCCSD(T) energy
-    ccsd_t_energy = repar.energy_pattern_parser(ccsd_t_pattern, output_string)
+    ccsd_t_energy = repar.energy_pattern_parser(ccsd_t_pattern,
+                                                output_string)
     if ccsd_t_energy is None:
-        ccsd_t_energy = repar.energy_pattern_parser(rccsd_t_pattern, output_string)
+        ccsd_t_energy = repar.energy_pattern_parser(rccsd_t_pattern,
+                                                    output_string)
 
     return ccsd_t_energy
 
@@ -273,7 +283,8 @@ def custom_e_reader(output_string):
     )
 
     # Obtain the custom energy
-    custom_energy = repar.energy_pattern_parser(custom_e_pattern, output_string)
+    custom_energy = repar.energy_pattern_parser(custom_e_pattern,
+                                                output_string)
 
     return custom_energy
 

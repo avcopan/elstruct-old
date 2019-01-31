@@ -15,7 +15,7 @@ PACKAGE = 'elstruct.reader'
 PROGRAM_MODULE_NAMES = {
     PROGRAM.GAUSSIAN: 'gaussian',
     PROGRAM.MOLPRO: 'molpro',
-#    PROGRAM.MOLPRO_MPPX: 'molpro',
+    # PROGRAM.MOLPRO_MPPX: 'molpro',
     PROGRAM.ORCA: 'orca',
     PROGRAM.PSI4: 'psi4',
 }
@@ -227,6 +227,51 @@ def internal_hessian(prog, output_string):
     int_hess = module.internal_hessian_reader(output_string)
 
     return int_hess
+
+
+# FUNCTIONS TO RETRIEVE GRADIENT #
+
+
+def cartesian_gradient_programs():
+    """ get the list of programs implementing cartesian Hessian readers
+    """
+    grad_progs = _programs_with_attribute(
+        'cartesian_gradient_reader')
+
+    return grad_progs
+
+
+def internal_gradient_programs():
+    """ get the list of programs implementing internal Hessian readers
+    """
+    grad_progs = _programs_with_attribute(
+        'internal_gradient_reader')
+
+    return grad_progs
+
+
+# Functions called to retrieve the gradient #
+
+def cartesian_gradient(prog, output_string):
+    """ Retrieves the optimized geometry in Cartesian xyz coordinates.
+        Units of Angstrom.
+    """
+    assert prog in cartesian_gradient_programs()
+    module = _import_module(prog)
+    cart_grad = module.cartesian_gradient_reader(output_string)
+
+    return cart_grad
+
+
+def internal_gradient(prog, output_string):
+    """ Retrieves the optimized geometry in Cartesian xyz coordinates.
+        Units of Angstrom.
+    """
+    assert prog in internal_hessian_programs()
+    module = _import_module(prog)
+    int_grad = module.internal_hessian_reader(output_string)
+
+    return int_grad
 
 
 # FUNCTIONS TO RETRIEVE IRC INFORMATION #

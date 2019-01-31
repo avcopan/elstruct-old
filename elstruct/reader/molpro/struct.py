@@ -12,7 +12,7 @@ Structural currently supported:
 """
 
 __authors__ = "Kevin Moore, Andreas Copan"
-__updated__ = "2019-01-18"
+__updated__ = "2019-01-30"
 
 from ..rere import parse as repar
 from ..rere import pattern as rep
@@ -31,7 +31,7 @@ def optimized_cartesian_geometry_reader(output_string):
     cart_geom_begin_pattern = 'END OF GEOMETRY OPTIMIZATION'
     cart_geom_end_pattern = 'Geometry written to block'
 
-    # Obtain text block containing the geometry 
+    # Obtain text block containing the geometry
     cart_geom_block = repar.block(cart_geom_begin_pattern,
                                   cart_geom_end_pattern,
                                   output_string)
@@ -64,7 +64,7 @@ def optimized_internal_geometry_reader(output_string):
     int_geom_begin_pattern = 'Optimized variables'
     int_geom_end_pattern = '*********************'
 
-    # Obtain text block containing the geometry 
+    # Obtain text block containing the geometry
     int_geom_block = repar.block(int_geom_begin_pattern,
                                  int_geom_end_pattern,
                                  output_string)
@@ -184,8 +184,10 @@ def initial_internal_geometry_reader(output_string):
         init_z_matrix_pattern, init_z_matrix_block)
 
     # Initial internal coords defs
-    init_coord_begin_pattern = 'ZUNIT=' + rep.one_or_more(relib.UPPERCASE_LETTER)
-    init_coord_end_pattern = 'Geometry written to block  1 of record 700'
+    init_coord_begin_pattern = (
+        'ZUNIT=' + rep.one_or_more(relib.UPPERCASE_LETTER))
+    init_coord_end_pattern = (
+        'Geometry written to block  1 of record 700')
 
     # Get the text block containing the internal coord defs
     init_internal_coord_block = repar.block(

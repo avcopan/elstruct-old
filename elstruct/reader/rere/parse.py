@@ -185,19 +185,22 @@ def hessian_pattern_parser(pattern, output_string):
     return hess2
 
 
+def cartesian_gradient_pattern_parser(pattern, output_string):
+    """ Return the geometry, consisting of lines of atomic symbols and coordinates
+    """
+    cart_grad_elements = all_captures(pattern, output_string)
+
+    cart_grad = tuple((sym, (float(x), float(y), float(z)))
+                      for sym, x, y, z in cart_grad_elements)
+
+    return cart_grad
+
 # def hessian_pattern_parser_2(output_string):
 #     """ Return the Hessian in either Cartesian or internal coordinates
 #     """
 # hessian cart and internal
 #     read from a 3xn cfour
 # 
-# 
-# def cartesian_gradient_pattern_parser_1(output_string):
-#     """ Get cart grad
-#     """
-#     basically like the cartesian geom molpro
-# 
-#     return cart_grad
 # 
 # def cartesian_gradient_pattern_parser_2(output_string):
 #     """ Get cart grad 2

@@ -225,10 +225,83 @@ def test__cartesian_hessian():
                     print('No Job')
 
 
+def test__cartesian_gradient():
+    """ test reader.harmonic_zero_point_vibrational_energy
+    """
+    # Make sure we're including these programs
+    assert (set({'molpro2015', 'gaussian09', 'psi4', 'orca4'}) <=
+            set(reader.cartesian_gradient_programs()))
+
+    for prog in reader.cartesian_gradient_programs():
+        print('\n'+prog)
+        for coord in ('internal', 'cartesian'):
+            print('\n'+coord)
+
+            # Set paths to the program output file and file w/ reference energy
+            directory_path = os.path.join(DATA_PATH, 'cartesian_gradient', prog, coord)
+            output_path = os.path.join(directory_path, 'output.dat')
+            # reference_path = os.path.join(directory_path, 'reference.harmzpve')
+
+            # Open the program output file and read in the zpve with reader
+            # if prog == 'orca4':
+            #     output_path = os.path.join(directory_path, 'Job_Data/input.hess')
+            # else:    
+            #     output_path = os.path.join(directory_path, 'output.dat')
+
+            if os.path.exists(output_path):
+                with open(output_path) as output_file:
+                    output_string = output_file.read()
+                cart_grad = reader.cartesian_gradient(
+                    prog=prog, output_string=output_string)
+
+                print(cart_grad)
+
+                # Read in the reference zpve for comparison using iohelp
+                # reference_harm_zpve = iohelp.read_harmonic_zero_point_vibrational_energy(reference_path)
+
+                # Compare hessian to reference to see if they match
+                # assert numpy.allclose(harm_zpve, reference_harm_zpve)
+            else:
+                print('No Job')
+
+
+def test__irc():
+    """ test reader.irc
+    """
+    # Make sure we're including these programs
+    assert (set({'gaussian09'}) <=
+            set(reader.irc_programs()))
+
+    for prog in reader.irc_programs():
+
+        # Set paths to the program output file and file w/ reference energy
+        directory_path = os.path.join(DATA_PATH, 'irc', prog)
+        output_path = os.path.join(directory_path, 'output.dat')
+        # reference_path = os.path.join(directory_path, 'reference.harmzpve')
+
+        if os.path.exists(output_path):
+            with open(output_path) as output_file:
+                output_string = output_file.read()
+            irc = reader.irc(
+                prog=prog, output_string=output_string)
+
+            # Read in the reference zpve for comparison using iohelp
+            # reference_harm_zpve = iohelp.read_harmonic_zero_point_vibrational_energy(reference_path)
+
+            print(irc)
+
+            # Compare hessian to reference to see if they match
+            # assert numpy.allclose(harm_zpve, reference_harm_zpve)
+        else:
+            print('No Job')
+
+
 if __name__ == '__main__':
     # test__energy()
     # test__harmonic_frequencies()
     # test__harmonic_zero_point_vibrational_energy()
-    test__optimized_cartesian_geometry()
+    # test__optimized_cartesian_geometry()
     # test__init_internal_geometry()
     # test__cartesian_hessian()
+    # test__cartesian_gradient()
+    test__irc()

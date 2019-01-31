@@ -132,26 +132,27 @@ def cartesian_gradient_reader(output_string):
     # FIRST PATTERN FOR THE GRADIENT #
 
     # Patterns to identify text block where gradient is located
-    cart_grad_block_begin_pattern = (
-        'Center' +
-        rep.one_or_more(relib.WHITESPACE) +
-        'Atomic' +
-        rep.one_or_more(relib.WHITESPSACE) +
-        'Force (Hartrees/Bohr)'
+    cart_grad_block_begin_pattern_1 = (
+        'Center     Atomic                   Forces (Hartrees/Bohr)'
+        #'Center' #+
+        #rep.one_or_more(relib.WHITESPACE) +
+        #'Atomic' +
+        #rep.one_or_more(relib.WHITESPACE) +
+        #'Forces (Hartrees/Bohr)'
     )
-    cart_grad_block_end_pattern = (
-        'Cartesian Forces:  Max' +
-        WHITESPACE +
-        FLOAT +
-        'RMS' +
-        WHITEPSACE +
-        FLOAT
+    cart_grad_block_end_pattern_1 = (
+        'Cartesian Forces:' #  Max' +
+        #rep.one_or_more(relib.WHITESPACE) +
+        #relib.FLOAT +
+        #'RMS' +
+        #rep.one_or_more(relib.WHITESPACE) +
+        #relib.FLOAT
     )
 
     # Obtain text block containing the gradient
-    cart_grad_block_1 = (cart_grad_block_begin_pattern,
-                         cart_grad_block_end_pattern,
-                         output_string)
+    cart_grad_block_1 = repar.block(cart_grad_block_begin_pattern_1,
+                                    cart_grad_block_end_pattern_1,
+                                    output_string)
 
     # Gradient Line Pattern: INT  INT  FLOAT  FLOAT  FLOAT  NEWLINE
     cart_grad_pattern_1 = (
@@ -163,29 +164,67 @@ def cartesian_gradient_reader(output_string):
         rep.one_or_more(relib.WHITESPACE) +
         rep.capturing(relib.FLOAT) +
         rep.one_or_more(relib.WHITESPACE) +
-        rep.capturing(relib.FLOAT) 
-    )        
-
+        rep.capturing(relib.FLOAT)
+    )
 
     # SECOND PATTERN FOR THE GRADIENT #
 
     # Patterns to identify text block where gradient is located
-    block_begin = 'FCINt: Cartesian first derivatives:'
-    block_end = 'FCInt: Cartesian force constants'
+    cart_grad_block_begin_pattern_2 = (
+        'Variable       Old X    -DE/DX   Delta X   Delta X   Delta X     New X'
+    )
+    cart_grad_block_end_pattern_2 = (
+        'Item' +
+        rep.one_or_more(relib.WHITESPACE) +
+        'Value' +
+        rep.one_or_more(relib.WHITESPACE) +
+        'Threshold' +
+        rep.one_or_more(relib.WHITESPACE) +
+        'Converged?'
+    )
 
     # Obtain text block containing the gradient
-    cart_grad_block_2 = (cart_grad_block_begin_pattern,
-                         cart_grad_block_end_pattern,
+    cart_grad_block_2 = (cart_grad_block_begin_pattern_2,
+                         cart_grad_block_end_pattern_2,
                          output_string)
     
     # Gradient Line Pattern: INT  EXP_D  EXP_D  ...  NEWLINE
+    cart_grad_pattern_2 = (
+        rep.one_or_more(relib.NONWHITESPACE) +
+        rep.one_or_more(relib.WHITESPACE) +
+        relib.FLOAT +
+        rep.one_or_more(relib.WHITESPACE) +
+        rep.capturing(relib.FLOAT) +
+        rep.one_or_more(relib.WHITESPACE + relib.FLOAT) 
+    )
 
+    # THIRD PATTERN FOR THE GRADIENT #
+
+    # Patterns to identify text block where gradient is located
+    cart_grad_block_begin_pattern_3 = 'FCINt: Cartesian first derivatives:'
+    cart_grad_block_end_pattern_3 = 'FCInt: Cartesian force constants'
+
+    # Obtain text block containing the gradient
+    cart_grad_block_3 = (cart_grad_block_begin_pattern_3,
+                         cart_grad_block_end_pattern_3,
+                         output_string)
+    
+    # Gradient Line Pattern: INT  EXP_D  EXP_D  ...  NEWLINE
+    cart_grad_pattern_3 = (
+        rep.capturing(
+            relib.INTEGER +
+            rep.one_or_more(relib.WHITESPACE) +
+            rep.one_or_more(relib.EXPONENTIAL_FLOAT_D)
+        )
+    )
 
     # RETRIEVE THE GRADIENT #
     
-    cart_grad = pattern_parser(cart_grad_pattern_1, cart_grad_block_1)
+    cart_grad = repar.cartesian_gradient_pattern_parser(cart_grad_pattern_1, cart_grad_block_1)
     if cart_grad is None:
-        cart_grad = pattern_parser(cart_grad_pattern_2, cart_grad_block_2)
+        cart_grad = repar.cartesian_gradient_pattern_parser(cart_grad_pattern_2, cart_grad_block_2)
+    if cart_grad is None:
+        cart_grad = repar.cartesian_gradient_pattern_parser(cart_grad_pattern_3, cart_grad_block_3)
 
     return cart_grad
 

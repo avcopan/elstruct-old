@@ -4,9 +4,10 @@ from a Molpro 2015 output file.
 """
 
 __authors__ = "Kevin Moore, Andreas Copan"
-__updated__ = "2019-01-18"
+__updated__ = "2019-01-30"
 
 from ..rere import parse as repar
+from ..rere import find as ref
 from ..rere import pattern as rep
 from ..rere import pattern_lib as relib
 
@@ -18,8 +19,10 @@ def cartesian_hessian_reader(output_string):
     """
 
     # Patterns to identify text block where Hessian is located
-    cart_hess_block_begin_pattern = 'Force Constants (Second Derivatives of the Energy) in [a.u.]'
-    cart_hess_block_end_pattern = 'Atomic Masses'
+    cart_hess_block_begin_pattern = (
+        'Force Constants (Second Derivatives of the Energy) in [a.u.]')
+    cart_hess_block_end_pattern = (
+        'Atomic Masses')
 
     # Obtain text block of containing the Hessian
     cart_hess_block = repar.block(cart_hess_block_begin_pattern,
@@ -40,7 +43,8 @@ def cartesian_hessian_reader(output_string):
     )
 
     # Retrieve the Hessian
-    cart_hess = repar.hessian_pattern_parser(cart_hess_pattern, cart_hess_block)
+    cart_hess = repar.hessian_pattern_parser(cart_hess_pattern,
+                                             cart_hess_block)
 
     return cart_hess
 
@@ -50,11 +54,45 @@ def cartesian_gradient_reader(output_string):
     """
 
     # GET ATOM SYMBOLS FOR GEOMETRY CHANGES #
-    
+
     # FIRST PATTERN FOR THE GRADIENT #
 
     # Patterns to identify text block where gradient is located
-    cart_grad_block_begin_pattern = (
+    cart_grad_block_begin_pattern_1 = (
+        'Atom' #+
+        #rep.one_or_more(relib.WHITESPACE) +
+        #'dE/dx' 
+        #rep.one_or_more(relib.WHITESPACE) +
+        #'dE/dy' +
+        #rep.one_or_more(relib.WHITESPACE) +
+        #'dE/dz'
+    )
+    cart_grad_block_end_pattern_1 = (
+        'Nuclear force contribution to virial'# =' 
+        # rep.one_or_more(relib.WHITESPACE) +
+        # relib.FLOAT
+    )
+
+    # Obtain text block of containing the optimized geometry in xyz coordinates
+    cart_grad_block_1 = repar.block(cart_grad_block_begin_pattern_1,
+                                    cart_grad_block_end_pattern_1,
+                                    output_string)
+
+    # PATTERN: INTEGER   FLOAT   FLOAT   FLOAT   FLOAT   FLOAT   FLOAT
+    cart_grad_pattern_1 = (
+        rep.capturing(relib.INTEGER) +
+        rep.one_or_more(relib.WHITESPACE) +
+        rep.capturing(relib.FLOAT) +
+        rep.one_or_more(relib.WHITESPACE) +
+        rep.capturing(relib.FLOAT) +
+        rep.one_or_more(relib.WHITESPACE) +
+        rep.capturing(relib.FLOAT)
+    )
+
+    # SECOND PATTERN FOR THE GRADIENT #
+
+    # Patterns to identify text block where gradient is located
+    cart_grad_block_begin_pattern_2 = (
         'Atom' +
         rep.one_or_more(relib.WHITESPACE) +
         'dE/dx' +
@@ -69,19 +107,16 @@ def cartesian_gradient_reader(output_string):
         rep.one_or_more(relib.WHITESPACE) +
         'd2E/dz2'
     )
-    cart_grad_block_end_pattern = 'wavefunction'
+    cart_grad_block_end_pattern_2 = 'wavefunction'
 
     # Obtain text block of containing the optimized geometry in xyz coordinates
-    cart_grad_block = repar.block(cart_grad_block_begin_pattern,
-                                  cart_grad_block_end_pattern,
-                                  output_string)
-
+    cart_grad_block_2 = repar.block(cart_grad_block_begin_pattern_2,
+                                    cart_grad_block_end_pattern_2,
+                                    output_string)
 
     # PATTERN: INTEGER   FLOAT   FLOAT   FLOAT   FLOAT   FLOAT   FLOAT
-    cart_grad_pattern = (
+    cart_grad_pattern_2 = (
         rep.capturing(relib.INTEGER) +
-        rep.one_or_more(relib.WHITESPACE) +
-        rep.capturing(relib.FLOAT) +
         rep.one_or_more(relib.WHITESPACE) +
         rep.capturing(relib.FLOAT) +
         rep.one_or_more(relib.WHITESPACE) +
@@ -96,10 +131,10 @@ def cartesian_gradient_reader(output_string):
         relib.FLOAT
     )
 
-    # SECOND PATTERN FOR THE GRADIENT #
+    # THIRD PATTERN FOR THE GRADIENT #
 
     # PATTERN: 'GXN / STRING'   FLOAT   FLOAT   FLOAT    FLOAT   FLOAT
-    cart_grad_pattern_2 = (
+    cart_grad_pattern_3 = (
         relib.UPPERCASE_LETTER +
         relib.UPPERCASE_LETTER +
         relib.INTEGER +
@@ -120,14 +155,14 @@ def cartesian_gradient_reader(output_string):
     )
 
     # RETRIEVE THE GRADIENT #
-    
-    cart_grad = repar.pattern_parser_cartesian_geometry(
-        cart_grad_pattern, cart_grad_block)
+
+    cart_grad = repar.cartesian_gradient_pattern_parser(
+        cart_grad_pattern_1, cart_grad_block_1)
     if cart_grad is None:
-        cart_grad = repar.pattern_parser_2(
-            cart_grad_pattern_2, output_string)
-        # turn it into a cartesian block
+        cart_grad = repar.cartesian_gradient_pattern_parser(
+            cart_grad_pattern_2, cart_grad_block_2)
+        if cart_grad is None:
+            cart_grad = repar.cartesian_gradient_pattern_parser(
+                cart_grad_pattern_3, output_string)
 
-    gradient = 0.0
-
-    return gradient
+    return cart_grad
