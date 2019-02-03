@@ -277,7 +277,7 @@ def internal_gradient(prog, output_string):
 # FUNCTIONS TO RETRIEVE IRC INFORMATION #
 
 
-def irc_geometries_programs():
+def irc_programs():
     """ get the list of programs implementing cartesian Hessian readers
     """
     irc_progs = _programs_with_attribute(
@@ -293,8 +293,21 @@ def irc_geometries_reader(prog, output_string):
     """ Retrieves the optimized geometry in Cartesian xyz coordinates.
         Units of Angstrom.
     """
-    assert prog in irc_geometries_programs()
+    assert prog in irc_programs()
     module = _import_module(prog)
     irc_geoms = module.irc_geometries_reader(output_string)
 
     return irc_geoms
+
+
+# FUNCTIONS TO CHECK JOB STATUS #
+
+def job_status_reader(prog, output_string):
+    """ Retrieves the optimized geometry in Cartesian xyz coordinates.
+        Units of Angstrom.
+    """
+    module = _import_module(prog)
+    error_msg = module.error_msg_reader(output_string)
+    complete_msg = module.complete_msg_reader(output_string)
+
+    return complete_msg, error_msg

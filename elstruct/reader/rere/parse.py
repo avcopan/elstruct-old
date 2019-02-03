@@ -195,6 +195,33 @@ def cartesian_gradient_pattern_parser(pattern, output_string):
 
     return cart_grad
 
+
+def cartesian_gradient_pattern_parser_2(pattern, output_string):
+    """ Return the geometry, consisting of lines of atomic symbols and coordinates
+    """
+    
+    # Get the list of each elements as strings
+    grad_lines = all_captures(pattern, output_string)
+
+    # Create ordered dict to maintain order
+    grad = OrderedDict()
+
+    # Add the lines
+    for line in grad_lines:
+        grad_id = line.strip().split()[0]
+        grad_elems = line.strip().split()[1:]
+        if grad_id not in grad:
+            grad[hess_id] = grad_elems
+        else:
+            grad[hess_id] += grad_elems
+
+    grad2 = []
+    for key, value in grad.iteritems():
+        grad2.append(value)
+
+    return grad2
+
+    
 # def hessian_pattern_parser_2(output_string):
 #     """ Return the Hessian in either Cartesian or internal coordinates
 #     """

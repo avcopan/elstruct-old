@@ -282,13 +282,30 @@ def test__irc():
         if os.path.exists(output_path):
             with open(output_path) as output_file:
                 output_string = output_file.read()
-            irc = reader.irc(
+            irc_geoms = reader.irc_geometries_reader(
+                prog=prog, output_string=output_string)
+            irc_gradsi = reader.irc_internal_gradients_reader(
+                prog=prog, output_string=output_string)
+            irc_gradsc = reader.irc_cartesian_gradients_reader(
+                prog=prog, output_string=output_string)
+            irc_hessi = reader.irc_internal_hessians_reader(
+                prog=prog, output_string=output_string)
+            irc_hessc = reader.irc_cartesian_hessians_reader(
                 prog=prog, output_string=output_string)
 
             # Read in the reference zpve for comparison using iohelp
             # reference_harm_zpve = iohelp.read_harmonic_zero_point_vibrational_energy(reference_path)
 
-            print(irc)
+            for geom in irc_geoms:
+                print(geom)
+            for grad in irc_gradsc:
+                print(geom)
+            for hess in irc_hessc:
+                print(hess)
+            for grad in irc_gradsi:
+                print(geom)
+            for hess in irc_hessi:
+                print(hess)
 
             # Compare hessian to reference to see if they match
             # assert numpy.allclose(harm_zpve, reference_harm_zpve)
