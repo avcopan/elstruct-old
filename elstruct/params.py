@@ -117,3 +117,11 @@ class FILE_EXTENSION():
     HARMONIC_FREQUENCIES = '.harmfreq'
     HARMONIC_ZERO_POINT_VIBRATIONAL_ENERGY = '.harmzpve'
     CARTESIAN_GEOMETRY = '.xyz'
+    INTERNAL_GEOMETRY = '.zmat'
+    CARTESIAN_HESSIAN = '.carthess'
+    INTERNAL_HESSIAN = '.inthess'
+    CARTESIAN_GRADIENT = '.cartgrad'
+    INTERNAL_GRADIENT = '.intgrad'
+
+
+

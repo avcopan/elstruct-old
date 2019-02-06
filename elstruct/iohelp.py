@@ -6,6 +6,12 @@ from ._dot_xyz import from_geometry as _dot_xyz_from_geometry
 from ._dot_xyz import to_geometry as _dot_xyz_to_geometry
 
 
+def _add_extension(file_name, ext):
+    if not str.endswith(file_name, ext):
+        file_name += ext
+    return file_name
+
+
 def _write_value(file_path, val):
     with open(file_path, 'w') as file_obj:
         file_obj.write(str(val))
@@ -16,12 +22,6 @@ def _read_float(file_path):
         val_str = file_obj.read()
     val = float(val_str)
     return val
-
-
-def _add_extension(file_name, ext):
-    if not str.endswith(file_name, ext):
-        file_name += ext
-    return file_name
 
 
 def write_energy(file_name, energy):
