@@ -15,16 +15,16 @@ __updated__ = "2019-01-11"
 
 import os
 from mako.template import Template
-from ... import params
 from elstruct._dot_xyz import from_geometry
 
-# Variables to set the names and paths to job-file templates
+
+# SET PATH TO THE TEMPLATE FILES #
 
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 TEMPLATE_PATH = os.path.join(DIR_PATH, 'templates')
 
 
-# Format user options to place into the input file
+# FUNCTIONS TO FORMAT VALUES APPROPRIATE FOR MOLPRO FILES #
 
 def get_method(method):
     """ Parse method to set level of theory
@@ -40,7 +40,77 @@ def get_method(method):
     return scf_method, corr_method
 
 
-# Write input file by filling in Mako template with user-options
+def get_geom(coords, coord_sys):
+    """
+    Writes a geometry file
+    """
+
+    # Read the geometry from the file
+    geom_init = from_geometry(coords)
+
+    # Format geometry to place into template
+    if coord_sys == 'xyz':
+        geom = "\n".join(geom_init.split("\n")[2:-1])
+    elif coord_sys == 'int':
+        geom = 'BOOO'
+    else:
+        geom = 'More BOO'
+
+    return geom
+
+
+def get_spin(mult):
+    """
+    Converts multiplicity to spin (2S) used by Molpro
+    """
+
+    spin = mult - 1
+
+    return spin
+
+
+def get_memory(memory_gb):
+    """
+    Converts memory in GB to MegaWords
+    """
+
+    memory_mw = int(memory_gb * (1000.0 / 8.0))
+
+    return memory_mw
+
+
+# FUNCTION TO BUILD DICTIONARIES USED TO FILL THE TEMPLATES #
+
+def get_energy_vals_dict(method, basis,
+                         coords, coord_sys,
+                         charge, mult,
+                         memory, comment):
+    """
+    Get the values to build an energy job which is the beginning of all jobs
+    """
+
+    # Obtain various quantities to place into the template
+    scf_method, corr_method = get_method(method)
+    geom = get_geom(coords, coord_sys)
+    spin = get_spin(mult)
+    memory_mw = get_memory(memory)
+
+    energy_vals = {
+        'corr_method': corr_method,
+        'scf_method': scf_method,
+        'basis': basis,
+        'geom': geom,
+        'coord_sys': coord_sys,
+        'charge': charge,
+        'spin': spin,
+        'memory': memory_mw,
+        'comment': comment
+    }
+
+    return energy_vals
+
+
+# FUNCTION TO FILL THE TEMPLATE WITH ALL THE DESIRED VALUES #
 
 def template_filler(template_name, **fill_vals):
     """ Fills in the template file with
@@ -55,108 +125,45 @@ def template_filler(template_name, **fill_vals):
     return filled_string
 
 
-def single_point_energy_writer(prog, input_file_name,
-                               method, basis,
-                               coords, coord_sys,
-                               charge, mult,
-                               memory, nprocs,
-                               comment='Single Point Energy'):
+# FUNCTIONS TO WRITE STRINGS FOR EACH MOLPRO JOB TYPE #
+
+def energy_writer(method, basis,
+                  coords, coord_sys,
+                  charge, mult,
+                  memory, nprocs,
+                  comment):
     """ Writes an input file for a single-point energy computation.
     """
 
-    # Format level of theory to place into template
-    scf_method, corr_method = get_method(method)
-
-    # Format geometry to place into template
-    geom_init = from_geometry(coords)
-    geom = "\n".join(geom_init.split("\n")[2:-1])
-
-    # Set/Augment variables to place into template
-    spin = mult - 1
-    memory = int(memory * (1000.0 / 8.0))
-
     # Establish a dictionary to fill in the template
-    energy_vals = {
-        'corr_method': corr_method,
-        'scf_method': scf_method,
-        'basis': basis,
-        'geom': geom,
-        'coord_sys': coord_sys,
-        'charge': charge,
-        'spin': spin,
-        'memory': memory,
-        'comment': comment
-    }
+    energy_vals = get_energy_vals_dict(method, basis,
+                                       coords, coord_sys,
+                                       charge, mult,
+                                       memory, comment)
 
     # Obtain a string with substituted template
-    template_name = 'single_point_energy.mako'
+    template_name = 'energy.mako'
     energy_string = template_filler(template_name, **energy_vals)
 
     return energy_string
 
- 
-def opt_and_harm_freq_writer(prog, input_file_name,
-                             method, basis,
+
+def opt_and_harm_freq_writer(method, basis,
                              coords, coord_sys,
                              charge, mult,
                              memory, nprocs,
-                             comment='Single Point Energy'):
+                             comment):
     """ Writes an input file for a single-point energy computation.
     """
 
-    # Format level of theory to place into template
-    scf_method, corr_method = get_method(method)
-
-    # Format geometry to place into template
-    geom_init = from_geometry(coords)
-    geom = "\n".join(geom_init.split("\n")[2:-1])
-
-    # Set/Augment variables to place into template
-    spin = mult - 1
-    memory = int(memory * (1000.0 / 8.0))
-
     # Establish a dictionary to fill in the template
-    energy_vals = {
-        'corr_method': corr_method,
-        'scf_method': scf_method,
-        'basis': basis,
-        'geom': geom,
-        'coord_sys': coord_sys,
-        'charge': charge,
-        'spin': spin,
-        'memory': memory,
-        'comment': comment
-    }
+    energy_vals = get_energy_vals_dict(method, basis,
+                                       coords, coord_sys,
+                                       charge, mult,
+                                       memory, comment)
 
     # Obtain a string with substituted template
     template_name = 'opt_and_harm_freq.mako'
     opt_and_freq_string = template_filler(template_name, **energy_vals)
 
     return opt_and_freq_string
-# def optimization_writer():
-#     """ Writes input file for a geometry optimization.
-#     """
-#
-#     return opt_string
-#
-#
-# def harm_freq_writer():
-#     """ Writes input file for a harmonic vibrational-frequency computation.
-#     """
-#
-#     return harm_freq_string
-#
-#
-# def opt_and_harm_freq_writer():
-#     """ Writes input file for a combined geometry-optimization and
-#         harmonic vibrational-frequency computation.
-#     """
-#
-#     return opt_and_harm_freq_string
-#
-#
-# def custom_job_writer():
-#     """ Writes input file for custom job with special user-defined inputs.
-#     """
-#
-#     return custom_job_string
