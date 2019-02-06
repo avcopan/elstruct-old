@@ -19,11 +19,17 @@ units angstrom
 
 THEORETICAL METHOD BLOCK (REQUIRED) 
 ----------------------------
-set {
-basis ${basis}
-reference ${reference}
-scf_type pk
+set basis ${basis}
+set reference ${reference}
+set scf_type pk
+${scf_options}
+${corr_options}
+
+if ${opt_options} is NotEmpty:
+set optking {
+${opt_options}
 }
+
 ----------------------------
 
 
@@ -60,5 +66,10 @@ wfn2.hessian().print_out()
 
 ++++++++++++++++++++++++++++
 
+
+SPECIAL OPTIONS BLOCK
+---------------------------
+${special_options}
+---------------------------
 
 

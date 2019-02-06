@@ -1,36 +1,16 @@
 
 MEMORY/COMMENT BLOCK (STRONGLY RECOMMENDED)
 ----------------------------
-***,${comment}
-memory,${memory},m
-----------------------------
-
-
-MOLECULE BLOCK (REQUIRED)
-----------------------------
-angstrom
-geometry = {
-${geom}
-}
-
-set,spin=${spin}
-set,charge=${charge}
+%Mem=${memory}GB
+%NProcShared=${nprocs}
 ----------------------------
 
 
 THEORETICAL METHOD BLOCK (REQUIRED) 
 ----------------------------
-basis=${basis}
-
-{${scf_method},${scf_options}
-${scf_directives}
-}
-
-% if corr_method != 'none':
-{${corr_method}, ${corr_options}
-${corr_directives}
-}
-% endif
+#N ${reference} ${method}/${basis}
+% if ${method} == dft:
+# Integral(Grid={intgrid})
 ----------------------------
 
 
@@ -39,36 +19,49 @@ JOB TYPE BLOCKS (CHOOSE ONE OR MORE)
 
 OPTIMIZATION BLOCK 
 ----------------------------
-{optg,${opt_options}
-${opt_directives}
-}
+# Opt 
 ----------------------------
 
 TS OPTIMIZATION BLOCK 
 ----------------------------
-{optg,root=2,${opt_options}
- ${opt_directives}
-}
+# Opt=(TS,CalcFC) 
 ----------------------------
 
 GRADIENT BLOCK
 ----------------------------
-{force}
+# Force
 ----------------------------
 
 HARMONIC FREQ BLOCK
 ----------------------------
-{freq, ${freq_options}
- print,hessian
- ${freq_directives}}
+# Freq
+----------------------------
+
+ANHARMONIC FREQ BLOCK
+----------------------------
+# Freq=(Anharmonic,VibRot,ReadAnharm
+----------------------------
+
+IRC BLOCK 
+----------------------------
+# IRC=(${irc_direction})
 ----------------------------
 
 ++++++++++++++++++++++++++++
 
+
+MOLECULE/COMMENT BLOCK (REQUIRED)
+----------------------------
+
+${comment}
+
+${charge} ${mult}
+${geom}
+---------------------------
+
+
 SPECIAL OPTIONS BLOCK
-----------------------------
+---------------------------
 ${special_options}
-----------------------------
-
-
+---------------------------
 

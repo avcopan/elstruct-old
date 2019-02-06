@@ -35,20 +35,17 @@ JOB TYPE BLOCKS (CHOOSE ONE OR MORE)
 
 OPTIMIZATION BLOCK 
 ----------------------------
-{optg
-}
+{optg}
 ----------------------------
 
 TS OPTIMIZATION BLOCK 
 ----------------------------
-{optg,root=2
-}
+{optg,root=2}
 ----------------------------
 
 GRADIENT BLOCK
 ----------------------------
-{force
-}
+{force}
 ----------------------------
 
 HARMONIC FREQ BLOCK
@@ -58,3 +55,10 @@ HARMONIC FREQ BLOCK
 ----------------------------
 
 ++++++++++++++++++++++++++++
+
+
+SPECIAL OPTIONS BLOCK
+----------------------------
+${special_options}
+----------------------------
+

@@ -1,74 +1,68 @@
 
 MEMORY/COMMENT BLOCK (STRONGLY RECOMMENDED)
 ----------------------------
-***,${comment}
-memory,${memory},m
+# ${comment}
+
+memory ${memory} GB
 ----------------------------
 
 
 MOLECULE BLOCK (REQUIRED)
 ----------------------------
-angstrom
-geometry = {
+molecule{
+${charge} ${mult}
 ${geom}
+units angstrom
 }
-
-set,spin=${spin}
-set,charge=${charge}
 ----------------------------
 
 
 THEORETICAL METHOD BLOCK (REQUIRED) 
 ----------------------------
-basis=${basis}
+set basis ${basis}
+set reference ${reference}
+set scf_type pk
 
-{${scf_method},${scf_options}
-${scf_directives}
-}
-
-% if corr_method != 'none':
-{${corr_method}, ${corr_options}
-${corr_directives}
-}
-% endif
 ----------------------------
 
 
 JOB TYPE BLOCKS (CHOOSE ONE OR MORE)
 ++++++++++++++++++++++++++++
 
+ENERGY BLOCK
+----------------------------
+energy('${method}')
+----------------------------
+
 OPTIMIZATION BLOCK 
 ----------------------------
-{optg,${opt_options}
-${opt_directives}
-}
+optimize('${method}')
 ----------------------------
 
 TS OPTIMIZATION BLOCK 
 ----------------------------
-{optg,root=2,${opt_options}
- ${opt_directives}
-}
+set opt_type ts
+optimize('${method}')
 ----------------------------
 
 GRADIENT BLOCK
 ----------------------------
-{force}
+G, wfn = gradient('${method}', return_wfn=True)
+wfn.gradient().print_out()
 ----------------------------
 
 HARMONIC FREQ BLOCK
 ----------------------------
-{freq, ${freq_options}
- print,hessian
- ${freq_directives}}
+E, wfn = frequencies('${method}', return_wfn=True)
+wfn2.hessian().print_out()
 ----------------------------
 
 ++++++++++++++++++++++++++++
 
-SPECIAL OPTIONS BLOCK
-----------------------------
-${special_options}
-----------------------------
 
+SPECIAL OPTIONS BLOCK
+---------------------------
+${special_options}
+---------------------------
 
 

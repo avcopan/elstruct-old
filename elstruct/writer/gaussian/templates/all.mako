@@ -52,7 +52,7 @@ HARMONIC FREQ BLOCK
 
 ANHARMONIC FREQ BLOCK
 ----------------------------
-# Freq=(Anharmonic,VibRot,ReadAnharm
+# Freq=(Anharmonic,VibRot,ReadAnharm)
 ----------------------------
 
 IRC BLOCK 
@@ -76,9 +76,9 @@ ${geom}
 ---------------------------
 
 
-OTHER OPTIONS BLOCK (USEFUL)
+SPECIAL OPTIONS BLOCK
 ---------------------------
-${other_special_cmd}
-Q: print stuff at bottom (i.e. Print=NMOrder=AscNoIrrep)?
+${special_options}
 ---------------------------
+
 
