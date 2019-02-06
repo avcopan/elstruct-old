@@ -122,6 +122,6 @@ class FILE_EXTENSION():
     INTERNAL_HESSIAN = '.inthess'
     CARTESIAN_GRADIENT = '.cartgrad'
     INTERNAL_GRADIENT = '.intgrad'
-
+    ANHARM_MATRIX = '.xmat'
 
 

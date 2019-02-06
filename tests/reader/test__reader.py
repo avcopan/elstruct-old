@@ -22,26 +22,24 @@ def test__energy():
     for prog in reader.energy_programs():
         print('\n'+prog)
         for method in reader.energy_program_methods(prog):
-            # Set paths to the program output file and file w/ reference energy
+            print('\n'+method)
+            
+            # Set paths to output file and file with reference energy
             directory_path = os.path.join(DATA_PATH, 'energy', prog, method)
             output_path = os.path.join(directory_path, 'output.dat')
-            # reference_path = os.path.join(directory_path, 'reference.energ')
+            reference_path = os.path.join(directory_path, 'reference.energ')
 
-            # Open the program output file and read in the energy with reader
+            # Open output file and read in the energy with reader module
             with open(output_path) as output_file:
                 output_string = output_file.read()
             energy = reader.energy(prog=prog, method=method,
                                    output_string=output_string)
 
             # Read in the reference energy for comparison using iohelp
-            # reference_energy = iohelp.read_energy(reference_path)
-
-            print(method)
-            print(energy)
-            # print(reference_energy)
+            reference_energy = iohelp.read_energy(reference_path)
 
             # Compare energy to reference to see if they match
-            # assert numpy.allclose(energy, reference_energy, atol=1e-3)
+            assert numpy.allclose(energy, reference_energy, atol=1e-3)
 
 
 def test__harmonic_frequencies():
@@ -62,26 +60,25 @@ def test__harmonic_frequencies():
             for struct in ('min', 'ts'):
                 print(struct)
 
-                # Set paths to the program output file and file w/ reference energy
+                # Set paths to output file and file with reference freqs 
                 directory_path = os.path.join(DATA_PATH, 'harmonic_frequencies', prog, coord, struct)
                 output_path = os.path.join(directory_path, 'output.dat')
-                # reference_path = os.path.join(directory_path, 'reference.harmfreq')
+                reference_path = os.path.join(directory_path, 'reference.harmfreq')
 
-                # Open the program output file and read in the freqs with reader
+                # Open output file and read in the freqs with reader module
                 if os.path.exists(os.path.join(directory_path, 'output.dat')):
                     with open(output_path) as output_file:
                         output_string = output_file.read()
                     harm_freqs = reader.harmonic_frequencies(prog=prog, output_string=output_string)
 
                     # Read in the reference energy for comparison using iohelp
-                    # reference_harm_freqs = iohelp.read_harmonic_frequencies(reference_path)
-
-                    print(harm_freqs)
+                    reference_harm_freqs = iohelp.read_harmonic_frequencies(reference_path)
 
                     # Compare freqs to reference to see if they match
-                    # assert numpy.allclose(harm_freqs, reference_harm_freqs)
+                    assert numpy.allclose(harm_freqs, reference_harm_freqs)
                 else:
-                    print('No Job')
+                    continue    
+
 
 def test__harmonic_zero_point_vibrational_energy():
     """ test reader.harmonic_zero_point_vibrational_energy
@@ -97,12 +94,12 @@ def test__harmonic_zero_point_vibrational_energy():
             for struct in ('min', 'ts'):
                 print(struct)
 
-                # Set paths to the program output file and file w/ reference energy
+                # Set paths to output file and file with reference ZPVE
                 directory_path = os.path.join(DATA_PATH, 'harmonic_zero_point_vibrational_energy', prog, coord, struct)
                 output_path = os.path.join(directory_path, 'output.dat')
-                # reference_path = os.path.join(directory_path, 'reference.harmzpve')
+                reference_path = os.path.join(directory_path, 'reference.harmzpve')
 
-                # Open the program output file and read in the zpve with reader
+                # Open output file and read in the zpve with reader module
                 if os.path.exists(os.path.join(directory_path, 'output.dat')):
                     with open(output_path) as output_file:
                         output_string = output_file.read()
@@ -110,14 +107,12 @@ def test__harmonic_zero_point_vibrational_energy():
                         prog=prog, output_string=output_string)
 
                     # Read in the reference zpve for comparison using iohelp
-                    # reference_harm_zpve = iohelp.read_harmonic_zero_point_vibrational_energy(reference_path)
-
-                    print(harm_zpve)
+                    reference_harm_zpve = iohelp.read_harmonic_zero_point_vibrational_energy(reference_path)
 
                     # Compare zpve to reference to see if they match
-                    # assert numpy.allclose(harm_zpve, reference_harm_zpve)
+                    assert numpy.allclose(harm_zpve, reference_harm_zpve)
                 else:
-                    print('No Job')
+                    continue    
 
 
 def test__optimized_cartesian_geometry():
@@ -135,9 +130,9 @@ def test__optimized_cartesian_geometry():
                 print(struct)
                 directory_path = os.path.join(DATA_PATH, 'optimized_cartesian_geometry', prog, coord, struct)
                 output_path = os.path.join(directory_path, 'output.dat')
-                # reference_path = os.path.join(directory_path, 'reference.xyz')
+                reference_path = os.path.join(directory_path, 'reference.xyz')
 
-                # reference_cart_geom = iohelp.read_cartesian_geometry(reference_path)
+                reference_cart_geom = iohelp.read_cartesian_geometry(reference_path)
 
                 if os.path.exists(os.path.join(directory_path, 'output.dat')):
                     with open(output_path) as output_file:
@@ -145,45 +140,17 @@ def test__optimized_cartesian_geometry():
 
                     cart_geom = reader.optimized_cartesian_geometry(prog=prog, output_string=output_string)
                 
-                    print(cart_geom)
-
-                    # ref_atm_syms, ref_atm_xyzs = zip(*reference_cart_geom)
+                    ref_atm_syms, ref_atm_xyzs = zip(*reference_cart_geom)
                     atm_syms, atm_xyzs = zip(*cart_geom)
 
-                    # assert atm_syms == ref_atm_syms
-                    # assert numpy.allclose(atm_xyzs, ref_atm_xyzs)
+                    assert atm_syms == ref_atm_syms
+                    assert numpy.allclose(atm_xyzs, ref_atm_xyzs)
                 else:
-                    print('No Job')
-
-# def test__init_internal_geometry():
-#     """ test reader.init_internal_geometry
-#     """
-#     # make sure we're including these programs
-#     assert (set({'molpro2015', 'molpro2015-mppx'}) <=
-#             set(reader.optimized_cartesian_geometry_programs()))
-#
-#     for prog in reader.optimized_cartesian_geometry_programs():
-#         directory_path = os.path.join(DATA_PATH, 'init_internal_geometry', prog)
-#         # reference_path = os.path.join(directory_path, 'reference.xyz')
-#
-#         # reference_cart_geom = iohelp.read_cartesian_geometry(reference_path)
-#
-#         output_path = os.path.join(directory_path, 'output.dat')
-#         with open(output_path) as output_file:
-#             output_string = output_file.read()
-#
-#         int_geom = reader.init_internal_geometry(prog=prog, output_string=output_string)
-#
-#         # ref_atm_syms, ref_atm_xyzs = zip(*reference_cart_geom)
-#         # atm_syms, atm_xyzs = zip(*cart_geom)
-#
-#         # assert atm_syms == ref_atm_syms
-#         # assert numpy.allclose(atm_xyzs, ref_atm_xyzs)
-#         print(int_geom)
+                    continue
 
 
 def test__cartesian_hessian():
-    """ test reader.harmonic_zero_point_vibrational_energy
+    """ test reader.cartesian_hessian
     """
     # Make sure we're including these programs
     assert (set({'molpro2015', 'gaussian09', 'psi4', 'orca4'}) <=
@@ -199,7 +166,7 @@ def test__cartesian_hessian():
                 # Set paths to the program output file and file w/ reference energy
                 directory_path = os.path.join(DATA_PATH, 'cartesian_hessian', prog, coord, struct)
                 output_path = os.path.join(directory_path, 'output.dat')
-                # reference_path = os.path.join(directory_path, 'reference.harmzpve')
+                reference_path = os.path.join(directory_path, 'reference.carthess')
 
                 # Open the program output file and read in the zpve with reader
                 if prog == 'orca4':
@@ -213,20 +180,20 @@ def test__cartesian_hessian():
                     cart_hess = reader.cartesian_hessian(
                         prog=prog, output_string=output_string)
 
+                    # Compute eigenvalues of Hessian
+                    cart_hess_evals = numpy.linalg.eigvals(cart_hess)
+                    print(cart_hess_evals)
                     # Read in the reference zpve for comparison using iohelp
-                    # reference_harm_zpve = iohelp.read_harmonic_zero_point_vibrational_energy(reference_path)
-
-                    for x in cart_hess:
-                        print(x)
+                    #reference_cart_hess_evals = iohelp.read_harmonic_zero_point_vibrational_energy(reference_path)
 
                     # Compare hessian to reference to see if they match
-                    # assert numpy.allclose(harm_zpve, reference_harm_zpve)
+                    #assert numpy.allclose(cart_hess_evals, reference_cart_hess_evals)
                 else:
-                    print('No Job')
+                   continue 
 
 
 def test__cartesian_gradient():
-    """ test reader.harmonic_zero_point_vibrational_energy
+    """ test reader.cartesian_gradient
     """
     # Make sure we're including these programs
     assert (set({'molpro2015', 'gaussian09', 'psi4', 'orca4'}) <=
@@ -240,13 +207,7 @@ def test__cartesian_gradient():
             # Set paths to the program output file and file w/ reference energy
             directory_path = os.path.join(DATA_PATH, 'cartesian_gradient', prog, coord)
             output_path = os.path.join(directory_path, 'output.dat')
-            # reference_path = os.path.join(directory_path, 'reference.harmzpve')
-
-            # Open the program output file and read in the zpve with reader
-            # if prog == 'orca4':
-            #     output_path = os.path.join(directory_path, 'Job_Data/input.hess')
-            # else:    
-            #     output_path = os.path.join(directory_path, 'output.dat')
+            reference_path = os.path.join(directory_path, 'reference.cartgrad')
 
             if os.path.exists(output_path):
                 with open(output_path) as output_file:
@@ -254,71 +215,19 @@ def test__cartesian_gradient():
                 cart_grad = reader.cartesian_gradient(
                     prog=prog, output_string=output_string)
 
-                print(cart_grad)
-
                 # Read in the reference zpve for comparison using iohelp
-                # reference_harm_zpve = iohelp.read_harmonic_zero_point_vibrational_energy(reference_path)
+                reference_cart_grad = iohelp.read_cartesian_gradient(reference_path)
 
                 # Compare hessian to reference to see if they match
-                # assert numpy.allclose(harm_zpve, reference_harm_zpve)
+                assert numpy.allclose(cart_grad, reference_cart_grad)
             else:
-                print('No Job')
-
-
-def test__irc():
-    """ test reader.irc
-    """
-    # Make sure we're including these programs
-    assert (set({'gaussian09'}) <=
-            set(reader.irc_programs()))
-
-    for prog in reader.irc_programs():
-
-        # Set paths to the program output file and file w/ reference energy
-        directory_path = os.path.join(DATA_PATH, 'irc', prog)
-        output_path = os.path.join(directory_path, 'output.dat')
-        # reference_path = os.path.join(directory_path, 'reference.harmzpve')
-
-        if os.path.exists(output_path):
-            with open(output_path) as output_file:
-                output_string = output_file.read()
-            irc_geoms = reader.irc_geometries_reader(
-                prog=prog, output_string=output_string)
-            irc_gradsi = reader.irc_internal_gradients_reader(
-                prog=prog, output_string=output_string)
-            irc_gradsc = reader.irc_cartesian_gradients_reader(
-                prog=prog, output_string=output_string)
-            irc_hessi = reader.irc_internal_hessians_reader(
-                prog=prog, output_string=output_string)
-            irc_hessc = reader.irc_cartesian_hessians_reader(
-                prog=prog, output_string=output_string)
-
-            # Read in the reference zpve for comparison using iohelp
-            # reference_harm_zpve = iohelp.read_harmonic_zero_point_vibrational_energy(reference_path)
-
-            for geom in irc_geoms:
-                print(geom)
-            for grad in irc_gradsc:
-                print(geom)
-            for hess in irc_hessc:
-                print(hess)
-            for grad in irc_gradsi:
-                print(geom)
-            for hess in irc_hessi:
-                print(hess)
-
-            # Compare hessian to reference to see if they match
-            # assert numpy.allclose(harm_zpve, reference_harm_zpve)
-        else:
-            print('No Job')
+                continue
 
 
 if __name__ == '__main__':
-    # test__energy()
-    # test__harmonic_frequencies()
-    # test__harmonic_zero_point_vibrational_energy()
-    # test__optimized_cartesian_geometry()
-    # test__init_internal_geometry()
-    # test__cartesian_hessian()
-    # test__cartesian_gradient()
-    test__irc()
+    #test__energy()
+    #test__harmonic_frequencies()
+    #test__harmonic_zero_point_vibrational_energy()
+    #test__optimized_cartesian_geometry()
+    test__cartesian_hessian()
+    #test__cartesian_gradient()

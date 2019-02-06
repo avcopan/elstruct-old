@@ -79,3 +79,25 @@ def read_cartesian_geometry(file_name):
         file_str = file_obj.read()
     cart_geom = _dot_xyz_to_geometry(file_str)
     return cart_geom
+
+
+def write_cartesian_hessian(file_name, hessian):
+    """ write the Cartesian Hessian to a file
+    """
+    file_path = _add_extension(file_name, FILE_EXTENSION.CARTESIAN_HESSIAN)
+    numpy.savetxt(file_path, hessian, fmt='%10.5e')
+
+
+def write_internal_hessian(file_name, hessian):
+    """ write the internal Hessian to a file
+    """
+    file_path = _add_extension(file_name, FILE_EXTENSION.INTERNAL_HESSIAN)
+    numpy.savetxt(file_path, hessian, fmt='%10.5e')
+
+
+def read_cartesian_hessian(file_name):
+    return numpy.loadtxt(file_name)
+
+
+def read_internal_hessian(file_name):
+    return numpy.loadtxt(file_name)

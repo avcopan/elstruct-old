@@ -1,6 +1,7 @@
 """ set of parsers to return bits of info
 """
-
+import itertools
+import numpy
 from collections import OrderedDict
 from .find import all_captures
 from .find import last_capture
@@ -65,8 +66,7 @@ def harmonic_frequencies_pattern_parser(pattern, output_string):
 
     # Locate the final pattern in the output file
     harm_freq_strings = all_captures(pattern, output_string)
-    
-    
+
     # Check if pattern values is found, if so, convert to float, remove zeros and imags
     if harm_freq_strings is not None:
         harm_freq_lists = []
@@ -165,24 +165,27 @@ def hessian_pattern_parser(pattern, output_string):
 
     # Get the list of each elements as strings
     hess_lines = all_captures(pattern, output_string)
-
     # Create ordered dict to maintain order
-    hess = OrderedDict()
+    hess_tril = OrderedDict()
 
     # Add the lines
     for line in hess_lines:
         hess_id = line.strip().split()[0]
         hess_elems = line.strip().split()[1:]
-        if hess_id not in hess:
-            hess[hess_id] = hess_elems
+        if hess_id not in hess_tril:
+            hess_tril[hess_id] = list(map(float, hess_elems))
         else:
-            hess[hess_id] += hess_elems
+            hess_tril[hess_id] += list(map(float, hess_elems))
 
-    hess2 = []
-    for key, value in hess.iteritems():
-        hess2.append(value)
+    dim = len(hess_tril)
+    hess_mat = numpy.zeros((dim, dim))
+    tril_vals = list(itertools.chain(*hess_tril.values()))
+    hess_mat[numpy.tril_indices(dim)] = numpy.array(tril_vals)
 
-    return hess2
+    assert hess_mat.ndim == 2
+    assert hess_mat.shape[0] == hess_mat.shape[1]
+
+    return hess_mat
 
 
 def cartesian_gradient_pattern_parser(pattern, output_string):

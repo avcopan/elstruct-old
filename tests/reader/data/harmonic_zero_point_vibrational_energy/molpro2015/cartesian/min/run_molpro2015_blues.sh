@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Set current working directory
-CWD=/blues/gpfs/home/kmoore/elstruct/tests/reader/data/harmonic_frequencies/molpro2015/cartesian/min
+CWD=/lcrc/project/CMRP/repos/data/harmonic_zero_point_vibrational_energy/molpro2015/cartesian/min
 
 # Set host
 HOST=b454

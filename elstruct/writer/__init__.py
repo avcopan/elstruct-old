@@ -69,7 +69,7 @@ def energy(prog,
     assert prog in energy_programs()
 
     module = _import_module(prog)
-    ENERGY_JOB_STR = module.single_point_energy_writer(
+    ENERGY_JOB_STR = module.energy_writer(
         method, basis,
         coords, coord_sys,
         charge, mult,
