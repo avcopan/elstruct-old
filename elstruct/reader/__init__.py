@@ -26,7 +26,6 @@ PROGRAM_MODULE_NAMES = {
 def _import_module(prog):
     """ import the module for a specific program
     """
-    
     assert prog in PROGRAM_MODULE_NAMES.keys()
     module_name = PROGRAM_MODULE_NAMES[prog]
     module = importlib.import_module('.'+module_name, PACKAGE)
@@ -37,7 +36,6 @@ def _import_module(prog):
 def _programs_with_attribute(attr):
     """ get a list of modules with a given attribute
     """
-    
     progs = []
     for prog in PROGRAM_MODULE_NAMES.keys():
         module = _import_module(prog)
@@ -55,7 +53,6 @@ def _programs_with_attribute(attr):
 def energy_programs():
     """ get the list of programs implementing energy readers
     """
-    
     energy_progs = _programs_with_attribute('ENERGY_READERS')
 
     return energy_progs
@@ -64,7 +61,6 @@ def energy_programs():
 def energy_program_methods(prog):
     """ get the list of energy reader methods for a given program
     """
-    
     assert prog in energy_programs()
     module = _import_module(prog)
     energy_prog_methods = tuple(module.ENERGY_READERS.keys())
@@ -77,7 +73,6 @@ def energy_program_methods(prog):
 def energy(prog, method, output_string):
     """ Retrieves the desired electronic energy.
     """
-    
     assert prog in energy_programs()
     assert method in energy_program_methods(prog)
     module = _import_module(prog)
@@ -94,7 +89,6 @@ def energy(prog, method, output_string):
 def harmonic_frequencies_programs():
     """ get the list of programs implementing hamonic frequency readers
     """
-    
     freq_progs = _programs_with_attribute('harmonic_frequencies_reader')
 
     return freq_progs
@@ -107,7 +101,7 @@ def harmonic_zero_point_vibrational_energy_programs():
 
     zpve_progs = harmonic_frequencies_programs()
 
-    return zpve_progs 
+    return zpve_progs
 
 
 # Functions called to retrieve the frequencies and ZPVE #
@@ -131,7 +125,7 @@ def harmonic_zero_point_vibrational_energy(prog, output_string):
     """
 
     freqs = harmonic_frequencies(prog=prog, output_string=output_string)
-    
+
     zpve = sum(freq for freq in freqs if freq > 0.0) / 2. * CM_TO_HART
 
     return zpve
@@ -151,17 +145,16 @@ def optimized_cartesian_geometry_programs():
     return geom_progs
 
 
-def init_internal_geometry_programs():
+def optimized_internal_geometry_programs():
     """ get the list of programs implementing init internal geometry readers
     """
     geom_progs = _programs_with_attribute(
-        'init_internal_geometry_reader')
+        'optimized_internal_geometry_reader')
 
     return geom_progs
 
 
 # Functions called to retrieve the geometries #
-
 def optimized_cartesian_geometry(prog, output_string):
     """ Retrieves the optimized geometry in Cartesian xyz coordinates.
         Units of Angstrom.
@@ -173,13 +166,13 @@ def optimized_cartesian_geometry(prog, output_string):
     return cart_geom
 
 
-def init_internal_geometry(prog, output_string):
+def optimized_internal_geometry(prog, output_string):
     """ Retrieves the optimized geometry in Cartesian xyz coordinates.
         Units of Angstrom.
     """
-    assert prog in init_internal_geometry_programs()
+    assert prog in optimized_internal_geometry_programs()
     module = _import_module(prog)
-    int_geom = module.init_internal_geometry_reader(output_string)
+    int_geom = module.optimized_internal_geometry_reader(output_string)
 
     return int_geom
 

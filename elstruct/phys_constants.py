@@ -2,6 +2,7 @@
 Library of physical constants and conversion factors
 """
 
+PI = 3.141592653589793
 
 # Physical Constants
 KB = 1.38064852e-23   # Boltzmann Constant in J/K (kg.m2)/(s2.K)
@@ -23,6 +24,8 @@ HART_TO_KCAL = 627.509608031
 HART_TO_J = 4.3597e-18
 KCAL_TO_KJ = 4.184
 KJ_TO_HART = 3.8088E-4
+DEG_TO_RAD = PI / 180.
+RAD_TO_DEG = 180. / PI
 
 # Dictionary correlating the atomic symbol with the mass in amu
 ATOM_MASS = {
