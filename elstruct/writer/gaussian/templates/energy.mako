@@ -11,51 +11,6 @@ $ how to escape percent signs?
 # ${scf_options}
 Q: scf_options like SCF=(xqc) and/or NoSymmetry
 
-JOB TYPE BLOCKS (CHOOSE ONE OR MORE)
-++++++++++++++++++++++++++++
-
-OPTIMIZATION BLOCK 
-----------------------------
-% if ${opt_options} == notempty:
-# Opt=(${opt_methods})
-% else
-# Opt 
-Q: can opt work as Opt=()?
-----------------------------
-
-TS OPTIMIZATION BLOCK 
-----------------------------
-% if ${opt_options} == notempty:
-# Opt=(TS,CalcFC,${opt_methods})
-% else
-# Opt=(TS,CalcFC) 
-----------------------------
-
-GRADIENT BLOCK
-----------------------------
-# Force
-----------------------------
-
-HARMONIC FREQ BLOCK
-----------------------------
-# Freq
-----------------------------
-
-ANHARMONIC FREQ BLOCK
-----------------------------
-# Freq=(Anharmonic,VibRot,ReadAnharm)
-----------------------------
-
-IRC BLOCK 
-----------------------------
-% if ${irc_options} == notempty:
-# IRC=(${irc_direction},${irc_options}
-% else:
-# IRC=(${irc_direction})
-----------------------------
-
-++++++++++++++++++++++++++++
-
 ${comment}
 
 ${charge} ${mult}

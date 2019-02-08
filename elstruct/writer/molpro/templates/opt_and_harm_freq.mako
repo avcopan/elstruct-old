@@ -16,5 +16,8 @@ basis=${basis}
 % if corr_method != 'none':
 {${corr_method}}
 % endif
-{optg}
-{freq}
+{optg, ${opt_options}
+}
+{freq, ${freq_options}
+ print, hessian
+}

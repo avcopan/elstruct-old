@@ -40,14 +40,12 @@ JOB TYPE BLOCKS (CHOOSE ONE OR MORE)
 OPTIMIZATION BLOCK 
 ----------------------------
 {optg,${opt_options}
-${opt_directives}
 }
 ----------------------------
 
 TS OPTIMIZATION BLOCK 
 ----------------------------
 {optg,root=2,${opt_options}
- ${opt_directives}
 }
 ----------------------------
 
@@ -60,7 +58,7 @@ HARMONIC FREQ BLOCK
 ----------------------------
 {freq, ${freq_options}
  print,hessian
- ${freq_directives}}
+}
 ----------------------------
 
 ++++++++++++++++++++++++++++
